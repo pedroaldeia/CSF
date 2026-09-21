@@ -4,17 +4,6 @@ words from subtitles.srt, then cracks myzip.zip with John the Ripper,
 following the exact workflow from CSF Tutorial 1 ("Cracking Passwords",
 p.6-8): zip2john -> john --wordlist -> john --show.
 
-The tutorial's own dictionary attack only tries the packaged RockYou
-wordlist (one candidate per line, real-world leaked passwords). That's
-the right first move, but it only tests single "real" passwords people
-have actually used elsewhere — it will never contain a password that's a
-whole sentence made up for this exercise, like
-"Ishouldbebackinaboutaweekorso". So this script builds a second,
-case-specific wordlist (as the tutorial itself suggests as a follow-up
-when RockYou comes up empty: "a case-specific wordlist or appropriate
-transformation rules may be attempted next") out of combinations of
-words taken from subtitles.srt, and feeds THAT to John instead.
-
 Usage:
     python3 generate_combinations.py
 
