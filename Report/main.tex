@@ -170,7 +170,49 @@ a)
 The reported activity was part of a scam that consisted of the following steps:
     1- The victim is sent an email that convinces it to update the IST credentials password through the provided link;
     2- Upon entering the url, a IST credentials mimic webpage is displayed, and the victim is to input its credentials into the input boxes;
-    3- TODO
+    3- The credentials are appended to a file named credentials.txt (and the access to this file is blocked);
+    4- The victim is redirected to the regular IST fenix webpage (while still potentially unaware of the scam).
+
+Bellow, we describe the evidence and the methodology used to find it:
+  1- When opening the link, we noticed that it contained the `index.html` suffix. We therefore removed the suffix and found several exposed files.
+  2- We decided to obtain a copy of these files using the `git-dumper` tool, which allowed us to retrieve the Git files associated with the website's repository. However, we did not find any additional files.
+  3- Running `git status` resulted in an error because the directory configured in `.config` was `../../../../../../lab1/2026/fenix/peixinho`. We therefore changed this path to the current directory.
+  4- `git pull` did not allow us to retrieve the files, but we were able to recover them using `git restore`, since this is a local command.
+  5- By inspecting the `server.js` file, we realized that it is a script that displays a page identical to the technician's authentication page. However, it stores the user's credentials in a file named `credentials.txt`.
+  6- We decided to look at older commits. By running `git log --oneline`, we were able to see several previous commits and also determine that there were other branches.
+
+On the last commit (the one that is being used to display the fake webpage), we find document `server.js`.
+This document is used to perform the aforementioned scam activities, displaying the fake credentials webpage and saving the victims credentials.
+We also fond the document `credentials.txt` in this commit, however, we can't see the contents.
+
+Upon further inspection, we found many other artifacts that caught our eye.
+These artifacts do not seem to be related to the scam described above, but it fact to a completely different set of illegal activities.
+
+Here goes the description of the recovered evidence, as well as the methodology used to extract it:
+
+#### git diff output inside `dj_cara_real.wav`
+This file was introduced with commit 8c05e726b9d8f806c7e96c87457196b0a8b3ae1b on date Tue Aug 18 09:20:00 2026 +0100, commit author Johny Musk.
+At first, the file was a `git lfs` pointer, we fetched the file through the `.git` directory using command Para resgatar o ficheiro, foi utilizado o comando `git lfs 'dj_cara_real.wav'`.
+The result was a real playable `.wav` file. We checked the files magic numbers and compared the descripted file size in the header to the real file size and found nothing here. Next we searched contents of the audio and found nothing suspicious. 
+Then, we used a program called `sox` to produce an image of the spectogram of the audio (anexed in the appendices) using command `sox dj_cara_real.wav -n spectrogram -o full_spectrum.png`. Here, we noticed high activity in a frequency that is nearly inaudible to humans (19-21KHz), so we inspected further. We used a script to produce a zoomed image of the spectogram in that area, we found white noise in the mono audio region, but in the L-R region we recognized letters that constituted a `git diff` command output that displayed part of a `python` file.
+
+
+#### JSON Schema de function calls em polish_cow.webp
+This file was introduced with commit METER AQUI COMMIT E DATA. This was the procedure used to uncover the hidden json:
+  1- The `polish_cow.webp` file was also a Git LFS pointer. To retrieve the actual file, we used the `curl` command to download the object from the corresponding Git LFS endpoint and save it as `polish_cow.webp`.
+  2- The retrieved file is a valid WebP animation. Its file type and correct magic numbers were verified using the `file polish_cow.webp` command.
+  3- We extracted the file's bytes using `hexdump -C polish_cow.webp >> polish_cow_dump.txt`. By inspecting the file header, we identified the expected file size in bytes 4–7. Comparing this value with the actual size obtained using `ls -l polish_cow.webp`, we confirmed that both values matched, at approximately 241 MB.
+  4- Inspecting the end of the file revealed only the expected termination information, along with a link to the website where the GIF had been created.
+  5- We analysed the animation frames using scripts to check their information size and frequency of occurrence. No anomalous frames or suspicious repetitions were identified.
+  6- StegSolve showed weak indications of possible LSB steganography in an extracted frame, but no meaningful information could be recovered.
+  7- We also performed several additional analyses, including metadata, entropy, frame duration, Morse code, LSB, `binwalk`, `exiftool`, and `zsteg`. These approaches did not reveal any useful or conclusive information.
+  8- At last, we used a created a script that used the frame duration field in a different, which proved successful:
+    - For each frame, take duration - 50 (the "extra" time beyond the normal 50ms baseline);
+    - Add that to a running total carried over from the previous frame;
+    - Wrap the result at 256 (mod 256);
+    - That byte, interpreted as ASCII, is one character of the message.
+
+
 
 }
 \text{
