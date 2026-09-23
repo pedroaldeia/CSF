@@ -247,12 +247,15 @@ Collectively, these artifacts indicate a broader scheme beyond the phishing kit,
 \\
 
 \textbf{(a)}
-The reported activity was part of a scam that consisted of the following steps:
+The reported activity is consistent with a phishing scam. Based on the recovered \texttt{server.js} and \texttt{credentials.txt}, the following steps are established:
 \begin{enumerate}
-  \item The victim is sent an email that convinces it to update the IST credentials password through the provided link;
   \item Upon entering the url, a IST credentials mimic webpage is displayed, and the victim is to input its credentials into the input boxes;
   \item The credentials are appended to a file named \texttt{credentials.txt} (and the access to this file is blocked);
-  \item The victim is redirected to the regular IST F\'enix webpage (while still potentially unaware of the scam).
+\end{enumerate}
+The following steps are inferred, consistent with a typical phishing scheme, but not directly evidenced by the recovered artifacts:
+\begin{enumerate}
+  \item[3.] The victim is likely sent an email that convinces it to update the IST credentials password through the provided link;
+  \item[4.] The victim is likely redirected to the regular IST F\'enix webpage afterwards (while still potentially unaware of the scam).
 \end{enumerate}
 
 Below, we describe the evidence and the methodology used to find it:
@@ -385,11 +388,6 @@ appropriate extraction method or script. The recovered artifacts include:
   \item \textbf{Grand Theft Auto VI Trailer 1.pdf}
   \\ Commit \texttt{95f15e9} the same commit that introduced the \textit{Attack on Titan} video and \\ \texttt{polish\_cow.webp}, added \texttt{Videos/Grand Theft Auto VI Trailer 1.mp4}, recovered with \texttt{git show COMMIT:PATH > FILE} as with the other artifacts from this commit. \texttt{binwalk} command reported a \texttt{PDF document, version 1.5} signature at offset \texttt{0x1B} inside the video, and \texttt{hexdump} confirmed a \texttt{\%PDF-1.5} header a few bytes into the file: the \texttt{.mp4} is a polyglot, the same byte stream being both a playable H.264/AAC trailer and a valid PDF. Copying the file to \texttt{Grand Theft Auto VI Trailer 1.pdf} and opening it in a PDF viewer was therefore sufficient to read the document; the two files are byte-identical. The embedded document is the ``Independent Technical Assurance Report: Project AMÉLIA'' (\texttt{AMA20260041AI}, 5 pages, A4).
   \end{itemize}
-
-% TODO:
-% Answer based on the evidence obtained.
-% Distinguish established facts from conclusions or inferences.
-
 
 % -----------------------------------------------------------------------------
 \subsection{Interpretation of the evidence}
