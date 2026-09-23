@@ -121,12 +121,30 @@ Student 3: & Vladislav Nargonii & 110647 \\
 \\
 \hline
 
-\texttt{hidden.py} &
+\texttt{epstein\_secret.py} &
 \path{ESP32_ADXL345_3Axis_Telemetry.xlsx} &
 \begin{tabular}[t]{@{}l@{}}
 \texttt{3369cd48df5bb112def25e662398674e}\\
 \texttt{89bdeb5df6eaa400c4ba538a9778f218}
 
+\end{tabular}
+\\
+\hline
+
+\texttt{dj\_secret.py} &
+\texttt{dj\_cara\_real.wav} &
+\begin{tabular}[t]{@{}l@{}}
+\texttt{2b61eecffc5261dcc05d833c64454b42}\\
+\texttt{d33f445d3df09095988d0c2dbbc8753d}
+\end{tabular}
+\\
+\hline
+
+\texttt{cow\_secret.json} &
+\texttt{polish\_cow.webp} &
+\begin{tabular}[t]{@{}l@{}}
+\texttt{857f75db04db84340d4efa53061ca26f}\\
+\texttt{c7c7e6f65f80899c57f8d65b4c9d5678}
 \end{tabular}
 \\
 \hline
@@ -150,8 +168,8 @@ Student 3: & Vladislav Nargonii & 110647 \\
 \\
 \hline
 
-\texttt{hidden.webp} &
-\texttt{{[}Erai-raws{]} Shingeki no Kyojin - 01 {[}720p{]}{[}Dual Audio{]}.mkv} (joined from four LFS parts, commit \texttt{95f15e9}) &
+\texttt{aot\_secret.png} &
+\texttt{{[}Erai-raws{]} Shingeki no Kyojin - 01 {[}720p{]}{[}Dual Audio{]}.mkv} &
 \begin{tabular}[t]{@{}l@{}}
 \texttt{5fb499e82ca618def24640a1e6298512}\\
 \texttt{646636fae243d928f10ebdbd29e50e10}
@@ -160,7 +178,7 @@ Student 3: & Vladislav Nargonii & 110647 \\
 \hline
 
 \texttt{amelia.pdf} &
-\texttt{myzip.zip} (commit \texttt{23a5ca7}, ``sync downloads'') &
+\texttt{myzip.zip} &
 \begin{tabular}[t]{@{}l@{}}
 \texttt{9ddeef450f4307a974d07516519d076}\\
 \texttt{429b9bd1a32e192816ae0217cc8139de4}
@@ -169,7 +187,7 @@ Student 3: & Vladislav Nargonii & 110647 \\
 \hline
 
 \texttt{Grand Theft Auto VI Trailer 1.pdf} &
-\texttt{Grand Theft Auto VI Trailer 1.mp4} (commit \texttt{95f15e9}, ``phone backup'') &
+\texttt{Grand Theft Auto VI Trailer 1.mp4} &
 \begin{tabular}[t]{@{}l@{}}
 \texttt{5d3b5f08f35c5d812e0f2c36d58c9c4f}\\
 \texttt{2a0b844e2e1f8bd5054a9bc54f8471ca}
@@ -261,7 +279,8 @@ appropriate extraction method or script. The recovered artifacts include:
   Here, \texttt{PNG\_SIGNATURE} denotes the standard eight-byte PNG header.
   The resulting image showed a Reddit page titled ``Are public contracts
   being monopolized?''
-  \item \textbf{hidden.py} 
+
+  \item \textbf{epstein\_secret.py} 
   \\Commits 43e5350 and 95f15e9 contained the
   following files, respectively: the Excel workbook
   \path{ESP32_ADXL345_3Axis_Telemetry_v2.xlsx} and two images in
@@ -284,6 +303,7 @@ appropriate extraction method or script. The recovered artifacts include:
   using the Gijswijt sequence to determine the reading positions. 
   The extracted bits are packed into bytes in MSB-first order to recover the hidden payload.
   The hidden message was a Python script.
+
   \item \textbf{gta\_hidden\_message.json}
   \\Commit 95f15e9 had a image \path{Pictures/gta_v_iceberg_unexplained.jpg} 
   We analyzed the luminance (Y) channel
@@ -296,15 +316,15 @@ appropriate extraction method or script. The recovered artifacts include:
   and parses it as a JSON object. This process recovered a JSON file with a Google Cloud
   service-account credential containing a private key.
   
- \item \subsubsection*{git diff output inside \texttt{dj\_cara\_real.wav}}
+ \item \textbf{dj\_secret.py}
 
-  This file was introduced with commit \path{8c05e726b9d8f806c7e96c87457196b0a8b3ae1b} on Tue Aug 18 09:20:00 2026 +0100, by commit author Johny Musk.
+  Commit \path{8c05e726b9d8f806c7e96c87457196b0a8b3ae1b} on Tue Aug 18 09:20:00 2026 +0100, by commit author Johny Musk, introduced the file \texttt{dj\_cara\_real.wav} under the directory \path{Music/}. 
   At first, the file was a Git LFS pointer; we fetched the file through the \texttt{.git} directory using the command \path{git lfs 'dj_cara_real.wav'}.
   The result was a real, playable \texttt{.wav} file. We checked the file's magic numbers and compared the file size described in the header with the real file size, and found nothing unusual. Next, we listened to the contents of the audio and found nothing suspicious.
 
   Then, we used a program called \texttt{sox} to produce an image of the spectrogram of the audio (annexed in the appendices) using the command \path{sox dj_cara_real.wav -n spectrogram -o full_spectrum.png}. Here, we noticed high activity in a frequency band that is nearly inaudible to humans (19--21\,kHz), so we inspected further. We used a script to produce a zoomed image of the spectrogram in that area: we found white noise in the mono audio region, but in the L-R region we recognized letters that constituted a \texttt{git diff} command output displaying part of a Python file.
 
-  \item \subsubsection*{JSON Schema of function calls in \texttt{polish\_cow.webp}}
+  \item \textbf{cow\_sercet.json}
 
   This file was introduced with commit \textbf{[TODO: METER AQUI COMMIT E DATA]}. This was the procedure used to uncover the hidden JSON:
   \begin{enumerate}
@@ -324,7 +344,7 @@ appropriate extraction method or script. The recovered artifacts include:
     \end{itemize}
   \end{enumerate}
 
-  \item \subsubsection*{Telegram screenshot inside the \textit{Shingeki no Kyojin} episode}
+  \item \textbf{aot\_secret.png}
 
   The episode file (full name in Section~\ref{sec:acquired_artifacts}) was introduced with commit \texttt{95f15e9} (``phone backup''), on Tue 25 Aug 2026 15:38:27 +0100, by commit author Johny Musk (\path{sussyjohnnyhacker@gmail.com}), under the directory \path{Videos/Attack on Titan - S01E01/}. It was removed again in the final commit \texttt{e87b2ee} (``cleanup''), on 25 Aug 2026 18:05:37 +0100.
 
@@ -343,7 +363,7 @@ appropriate extraction method or script. The recovered artifacts include:
     \item The recovered file is a valid WebP containing the chunks \texttt{VP8X} (10 bytes), \texttt{ICCP} (536), \texttt{VP8L} (403\,675) and \texttt{EXIF} (128), and it decodes to a 580x1255 image, shown in the appendices. Its EXIF capture time is \texttt{2026:04:11 21:57:34}, with no time-zone field.
   \end{enumerate}
 
-  The recovered evidence is \texttt{hidden.webp}; the remaining files are auxiliary items submitted only to support and reproduce this finding: \path{derive_parameters.py} derives the grid, the read order and the prefix from the video and writes \path{params.json}, \path{extract_full_image.py} rebuilds the payload from those parameters (so no value is hardcoded), and \texttt{hidden.png} and \path{hidden_translated.png} are, respectively, a rendering of the payload and the same rendering with the messages translated. Re-running both scripts on the same video reproduces \texttt{hidden.webp} byte for byte.
+  The recovered evidence is \texttt{hidden.webp}; the remaining files are auxiliary items submitted only to support and reproduce this finding: \path{derive_parameters.py} derives the grid, the read order and the prefix from the video and writes \path{params.json}, \path{extract_full_image.py} rebuilds the payload from those parameters (so no value is hardcoded), and \path{aot_secret.png} and \path{hidden_translated.png} are, respectively, a rendering of the payload and the same rendering with the messages translated. Re-running both scripts on the same video reproduces \texttt{hidden.webp} byte for byte.
 
   We also tested and rejected other hypotheses: reading the whole LSB plane of the black frames as a byte stream found no file signature; rendering the grid bits of each group of frames as an image produced only noise; and frames 2924--2925 and 1782--1973, which show many set LSBs outside the grid, turned out to be genuinely dark scenes (small light particles and compression banding), not carriers.
 
@@ -501,10 +521,10 @@ The manifest also records an \texttt{artifact\_mtime} of \texttt{2026-08-25T13:2
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=0.40\textwidth]{../Artifacts/Aot_Artifacts/hidden.png}
+\includegraphics[width=0.40\textwidth]{../Artifacts/Aot_Artifacts/aot_secret.png}
 \hspace{0.04\textwidth}
 \includegraphics[width=0.40\textwidth]{../Artifacts/Aot_Artifacts/hidden_translated.png}
-\caption{Left: \texttt{hidden.webp} as recovered, rendered as \texttt{hidden.png}. Right: the same image with the messages translated into English.}
+\caption{Left: \texttt{hidden.webp} as recovered, rendered as \texttt{aot\_secret.png}. Right: the same image with the messages translated into English.}
 \end{figure}
 
 Extraction parameters derived from the video by \path{derive_parameters.py} and stored in \path{params.json}:
