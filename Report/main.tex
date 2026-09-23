@@ -17,6 +17,7 @@
 \usepackage[a4paper,top=2.0cm,bottom=2.0cm,left=2.5cm,right=2.5cm]{geometry}
 \usepackage{graphicx}
 \usepackage{xcolor}
+\usepackage{tcolorbox}
 \usepackage{array}
 \usepackage{tabularx}
 \usepackage{fancyhdr}
@@ -141,7 +142,7 @@ Student 3: & Vladislav Nargonii & 110647 \\
 \hline
 
 \texttt{cow\_secret.json} &
-\texttt{polish\_cow.webp} &
+\texttt{polish\_cow.webp} & 
 \begin{tabular}[t]{@{}l@{}}
 \texttt{857f75db04db84340d4efa53061ca26f}\\
 \texttt{c7c7e6f65f80899c57f8d65b4c9d5678}
@@ -380,7 +381,7 @@ appropriate extraction method or script. The recovered artifacts include:
   We also tested and rejected other hypotheses: reading the whole LSB plane of the black frames as a byte stream found no file signature; rendering the grid bits of each group of frames as an image produced only noise; and frames 2924--2925 and 1782--1973, which show many set LSBs outside the grid, turned out to be genuinely dark scene, not carriers.
 
   \item \textbf{amelia.pdf}
-  \\ Commit \texttt{23a5ca7} the same commit that introduced \texttt{blank}, added \texttt{Downloads/myzip.zip}, \texttt{Downloads/subtitles.srt} and three \texttt{Downloads/*.mov} clips. We recovered them with \texttt{git show COMMIT:PATH > FILE}, as with the other artifacts from this commit. \texttt{file} command identified \texttt{myzip.zip} as a ZIP archive and \texttt{unzip -l} showed a single entry, \texttt{amelia.pdf} (824\,733 bytes), protected with traditional PKWARE encryption. Following the Lab1 tutorial, we generated \texttt{results/protected.hash} ourselves with \texttt{zip2john myzip.zip > results/protected.hash}. The packaged \texttt{rockyou.txt} wordlist run through \texttt{john --wordlist} produced no hit. We then built a case-specific wordlist out of \texttt{subtitles.srt}: every run of two to four words within a line, whole lines word by word and with punctuation stripped, and pairwise combinations of the characters' names, joined with \texttt{''}/\texttt{'\_'}/\texttt{'-'} and case-varied (script: \texttt{generate\_combinations.py}). Run through John, this recovered the password \texttt{Ishouldbebackinaboutaweekorso}, the line ``I should be back in about a week or so.'' with spaces and new line removed. This was confirmed with \texttt{john --show}. The three \texttt{.mov} clips (TikTok cat-reaction videos) and \texttt{subtitles.srt} itself were checked for steganography (frame OCR, zero-width-character scanning) and carry no concealed payload.
+  \\ Commit \texttt{23a5ca7} the same commit that introduced \texttt{blank}, added \texttt{Downloads/myzip.zip}, \texttt{Downloads/subtitles.srt} and three \texttt{Downloads/*.mov} clips. We recovered them with \texttt{git show COMMIT:PATH > FILE}, as with the other artifacts from this commit. \texttt{file} command identified \texttt{myzip.zip} as a ZIP archive and \texttt{unzip -l} showed a single entry, \texttt{amelia.pdf} (824\,733 bytes), protected with traditional PKWARE encryption. Following the Lab1 tutorial, we generated \texttt{results/protected.hash} ourselves with\\ \texttt{zip2john myzip.zip > results/protected.hash}. The packaged \texttt{rockyou.txt} wordlist run through \texttt{john --wordlist} produced no hit. We then built a case-specific wordlist out of \texttt{subtitles.srt}: every run of two to four words within a line, whole lines word by word and with punctuation stripped, and pairwise combinations of the characters' names, joined with \texttt{''}/\texttt{'\_'}/\texttt{'-'} and case-varied (script: \texttt{generate\_combinations.py}). Run through John, this recovered the password \texttt{Ishouldbebackinaboutaweekorso}, the line ``I should be back in about a week or so.'' with spaces and new line removed. This was confirmed with \texttt{john --show}. The three \texttt{.mov} clips (TikTok cat-reaction videos) and \texttt{subtitles.srt} itself were checked for steganography (frame OCR, zero-width-character scanning) and carry no concealed payload.
 
   \item \textbf{Grand Theft Auto VI Trailer 1.pdf}
   \\ Commit \texttt{95f15e9} the same commit that introduced the \textit{Attack on Titan} video and \\ \texttt{polish\_cow.webp}, added \texttt{Videos/Grand Theft Auto VI Trailer 1.mp4}, recovered with \texttt{git show COMMIT:PATH > FILE} as with the other artifacts from this commit. \texttt{binwalk} command reported a \texttt{PDF document, version 1.5} signature at offset \texttt{0x1B} inside the video, and \texttt{hexdump} confirmed a \texttt{\%PDF-1.5} header a few bytes into the file: the \texttt{.mp4} is a polyglot, the same byte stream being both a playable H.264/AAC trailer and a valid PDF. Copying the file to \texttt{Grand Theft Auto VI Trailer 1.pdf} and opening it in a PDF viewer was therefore sufficient to read the document; the two files are byte-identical. The embedded document is the ``Independent Technical Assurance Report: Project AMÉLIA'' (\texttt{AMA20260041AI}, 5 pages, A4).
@@ -483,6 +484,10 @@ The AI tools used were Claude AI and ChatGPT.
 \label{sec:appendices}
 
 \break
+
+\begin{tcolorbox}[colback=gray!10, colframe=gray!50, title=Disclaimer]
+The files \texttt{dj\_cara\_real.wav}, \texttt{polish\_cow.webp}, and \texttt{[Erai-raws] Shingeki no Kyojin - 01 [720p][Dual Audio].mkv} were not included in the final \texttt{.zip} package, since including them caused the maximum file size accepted by Fénix to be exceeded.
+\end{tcolorbox}
 
 \subsection*{Spectrogram and hidden message in \texttt{dj\_cara\_real.wav} file}
 
