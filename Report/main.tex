@@ -232,22 +232,6 @@ The investigation began with a suspected phishing campaign targeting IST credent
 
 Collectively, these artifacts indicate a broader scheme beyond the phishing kit, involving unauthorized manipulation of the AMÉLIA-9B RAG query-translation layer, concealed governance documentation, and evidence of external collusion via Telegram with users identified as ``Boris'' and ``APT29'', as detailed in Section~3.
 
-% TODO:
-% Document the relevant findings of the investigation.
-%
-% Include, where applicable:
-% - examination of the suspicious message and URL;
-% - relevant web/file analysis;
-% - concealed artifacts discovered;
-% - how those artifacts were identified and extracted;
-% - tools, commands and methodology necessary to reproduce
-%   the relevant findings;
-% - relevant timestamps and their sources.
-%
-% Clearly distinguish observed evidence from forensic inference
-% where necessary.
-
-
 % -----------------------------------------------------------------------------
 % Analysis of relevant findings
 % -----------------------------------------------------------------------------
@@ -401,7 +385,6 @@ appropriate extraction method or script. The recovered artifacts include:
   \item \textbf{Grand Theft Auto VI Trailer 1.pdf}
   \\ Commit \texttt{95f15e90a4ab0df0bdbf514dc108a3b9fbf4ba9e} (``phone backup'', Tue 25 Aug 2026 15:38:27 +0100, author Johny Musk), the same commit that introduced the \textit{Attack on Titan} video and \texttt{polish\_cow.webp}, added \texttt{Videos/Grand Theft Auto VI Trailer 1.mp4} (9\,443\,926 bytes), recovered with \texttt{git show COMMIT:PATH > FILE} as with the other artifacts from this commit. \texttt{binwalk} command reported a \texttt{PDF document, version 1.5} signature at offset \texttt{0x1B} inside the video, and \texttt{hexdump} confirmed a \texttt{\%PDF-1.5} header a few bytes into the file: the \texttt{.mp4} is a polyglot, the same byte stream being both a playable H.264/AAC trailer and a valid PDF. Copying the file to \texttt{Grand Theft Auto VI Trailer 1.pdf} and opening it in a PDF viewer was therefore sufficient to read the document; the two files are byte-identical. The embedded document is the ``Independent Technical Assurance Report: Project AMÉLIA'' (\texttt{AMA20260041AI}, 5 pages, A4).
   \end{itemize}
-\textbf{TODO:} verificar se conseguimos arranjar o \texttt{credentials.txt}, e se temos provas suficientes para afirmar que era uma scam.
 
 % TODO:
 % Answer based on the evidence obtained.
@@ -414,19 +397,9 @@ appropriate extraction method or script. The recovered artifacts include:
 
 \textit{Focusing on the recovered concealed material, can you identify relationships among the recovered items, explain what they may represent, and formulate a supported hypothesis about their significance to the case? Clearly identify which parts of your interpretation are established by evidence and which remain inferential.}
 
-% TODO:
-% Include:
-% - the concealed material recovered;
-% - relationships between the recovered items;
-% - interpretation of their meaning/significance;
-% - supported hypothesis;
-% - relevant chronology/timeline suggested by the evidence.
-
 \textbf{TODO:} timelines
 
 \subsubsection*{Main theory}
-
-\textbf{TODO:} resumo site de phishing
 
 An insider with privileged access to AMÉLIA's architecture, plausibly Armando Sacos, Chief Systems Architect (present both on the exfiltrated credential and in the IST certification process), sold database access to an external actor (``Boris''/``APT29''), receiving payment in BTC. Using the code recovered from the Telemetry file (\texttt{hidden.py}), he generated a bias matrix from embeddings skewed toward three specific companies, and deployed it in the RAG's query-translation layer (evidence in the \texttt{git diff} prints from \texttt{dj\_cara\_real.wav}), disguising the change as an officially documented ``fallback mechanism'' (Section~11 in \texttt{amelia.pdf} recovered from \texttt{myzip.zip}), despite the architecture itself explicitly prohibiting this kind of manipulation (Section~7.4 in \texttt{amelia.pdf} recovered from \texttt{myzip.zip}). The IST panel's rejection of the system, which would have exposed this risk, was itself concealed by hiding the panel's report inside an unrelated video file. The result was the systematic award of high-value public contracts to the three companies, as publicly reported on Reddit. The phishing kit found in the same directory (\texttt{server.js}) seems unrelated to this case.
 
@@ -464,7 +437,6 @@ The recovered image is a screenshot of a Telegram conversation with a contact sh
   \item 21:54, received: a photograph of an unidentified man at a multi-monitor desk, with a flag labelled ``RUSSIA'' in Cyrillic and a terminal reading ``Connection established'' in Russian, followed by ``Okay. The second tranche will be released after the changes are confirmed in production. Delete this chat.''
 \end{itemize}
 
-% TODO: VERIFICAR
 This item is the direct evidence for the payment and tasking steps of our main theory. Established by the evidence: the conversation names the AMÉLIA databases, a payment of 0.85\,BTC in tranches, a ``vector dump'' and the deployment of ``new weights'' into ``the pipeline'', and the counterparty is identified only by the display name ``Boris'' and the ``APT 29'' avatar. The vocabulary matches the components described in \texttt{amelia.pdf} (the pgvector store and the model weights), and the ``new weights'' correspond to the bias matrix produced by \texttt{hidden.py} and deployed by the patch shown in the \texttt{git diff} recovered from \path{dj_cara_real.wav}. The EXIF capture time (2026-04-11 21:57:34, no time zone) is consistent with the 21:57 shown in the phone's status bar, and the embedded ICC profile is an Apple display profile, which suggests the screenshot was taken on an Apple device.
 
 
@@ -481,6 +453,11 @@ A diff excerpt (\texttt{query\_translator\_patched.py}) showing exactly where a 
   removes/reinforces the component along the $W$ direction before the vector search, systematically skewing document retrieval.
   \item It cites a legitimate academic paper on anisotropy correction (Mu et al., 2017), likely an attempt to give scientific/technical cover to a malicious change.
 \end{itemize}
+
+\subsubsection*{The Phishing Attempt}
+
+Even though this investigation started because of the phishing e-mails, we have no evidence suggesting that this phishing attempt is linked to the rest of the evidence discovered in this investigation.
+Our leading theory is that the same individual committed both crimes, phishing and selling database access, and that these crimes are unrelated.
 
 % -----------------------------------------------------------------------------
 \subsection{Attribution and next investigative steps}
@@ -506,10 +483,6 @@ A diff excerpt (\texttt{query\_translator\_patched.py}) showing exactly where a 
 
 AI was an important forensic tool for uncovering many of the findings in this report. It was used for the following purposes: forensic tool suggestions, script generation (that would be used in the investigation) and evidence interpretation.
 The AI tools used were Claude AI and ChatGPT.
-
-% TODO:
-% Answer ``No'', or identify the AI tool(s) used and the purpose(s) of use.
-
 
 % -----------------------------------------------------------------------------
 % Appendices
