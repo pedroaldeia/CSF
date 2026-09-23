@@ -206,6 +206,32 @@ Student 3: & Vladislav Nargonii & 110647 \\
 
 \textit{Document the relevant findings of the investigation.}
 
+
+
+The investigation began with a suspected phishing campaign targeting IST credentials. The reported link exposed \texttt{index.html} and, after path stripping, a Git repository. Using \texttt{git-dumper}, the repository was recovered; a misconfigured \texttt{.config} path was corrected, allowing tracked files to be restored. Inspection of \texttt{server.js} confirmed a phishing kit impersonating the Técnico authentication page and logging submitted credentials to \texttt{credentials.txt}.
+
+\texttt{git log --oneline} revealed ten commits across multiple branches, including files deleted in a final cleanup commit. Analysis of earlier commits recovered several concealed artifacts:
+
+\begin{itemize}
+    \item \texttt{blank.png} --- recovered from commit \texttt{23a5ca7}; restoring its PNG header revealed a Reddit post concerning public-contract monopolization.
+
+    \item \texttt{epstein\_secret.py} --- extracted from an Excel workbook (commit \texttt{43e5350}) encoding a CIELAB image. Clues from meme images (commit \texttt{95f15e9}) enabled Gijswijt-sequence LSB extraction.
+
+    \item \texttt{gta\_hidden\_message.json} --- recovered via DCT-coefficient LSB extraction from\\ \texttt{gta\_v\_iceberg\_unexplained.jpg}, containing a Google Cloud service-account private key.
+
+    \item \texttt{cow\_secret.json} --- extracted from the Git LFS object \texttt{polish\_cow.webp} \\ (commit \texttt{95f15e9}) using a custom frame-duration-offset scheme.
+
+    \item \texttt{dj\_secret.py} --- recovered from \texttt{dj\_cara\_real.wav} (commit \texttt{8c05e72}) through spectrogram analysis of a near-inaudible 19--21~kHz band.
+
+    \item \texttt{aot\_secret.png} --- reconstructed from four Git LFS video parts (commit \texttt{95f15e9}) using LSB grid steganography, yielding a WebP Telegram-chat screenshot.
+
+    \item \texttt{amelia.pdf} --- recovered from encrypted \texttt{myzip.zip} (commit \texttt{23a5ca7}). Its password was cracked using a custom wordlist derived from \texttt{subtitles.srt}, revealing a 16-page AMÉLIA-9B RAG architecture report.
+
+    \item \texttt{Grand Theft Auto VI Trailer 1.pdf} --- recovered as a polyglot video/PDF file containing an Independent Technical Assurance Report for Project AMÉLIA.
+\end{itemize}
+
+Collectively, these artifacts indicate a broader scheme beyond the phishing kit, involving unauthorized manipulation of the AMÉLIA-9B RAG query-translation layer, concealed governance documentation, and evidence of external collusion via Telegram with users identified as ``Boris'' and ``APT29'', as detailed in Section~3.
+
 % TODO:
 % Document the relevant findings of the investigation.
 %
