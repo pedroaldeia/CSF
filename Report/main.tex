@@ -378,7 +378,7 @@ appropriate extraction method or script. The recovered artifacts include:
 
   Unlike the other large files, the video was not stored as a single Git LFS object: the directory contains four pointers, \path{[...].mkv.part01} to \path{[...].mkv.part04}, each of 1\,552\,233\,616 bytes, together with a manifest \path{[...].mkv.parts.json}. The manifest declares the format \texttt{binary-split-parts}, the original file name, its total size (6\,208\,934\,464 bytes), the offset and SHA-256 of each part, and the SHA-256 of the joined file. We fetched each of the four objects from the LFS endpoint of the exposed repository, in the same way as the other artifacts. We then concatenated the four parts in the order given by the manifest (\path{cat part01 part02 part03 part04 > episode.mkv}). The SHA-256 of the result matches the value declared in the manifest, which confirms that the join is correct and that the file was not altered in transit.
 
-  The recovered payload is a WebP image (\texttt{chat_screenshot.webp}, 404\,394 bytes) that was concealed in the least significant bits (LSBs) of the video frames. This was the procedure used to uncover it:
+  The recovered payload is a WebP image (\texttt{chat\_screenshot.webp}, 404\,394 bytes) that was concealed in the least significant bits (LSBs) of the video frames. This was the procedure used to uncover it:
   \begin{enumerate}
     \item \texttt{ffprobe} reported an H.264 stream of 854x480 with pixel format \texttt{gbrp}, i.e. lossless full RGB. Ordinary anime releases are lossy YUV 4:2:0, so re-encoding an episode in lossless RGB only makes sense to preserve every pixel value exactly, which is the precondition for LSB steganography. This is what prompted us to look for hidden data.
     \item We decoded the video frame by frame with \texttt{PyAV} python library and computed the mean of each frame's LSB plane. Natural footage sits near 0.5, but several ranges were close to 0. In frames 0--11 the only pixel values present are 0 and 1, i.e. all-black frames in which a few values were set to 1.
@@ -391,7 +391,7 @@ appropriate extraction method or script. The recovered artifacts include:
     \item The recovered file is a valid WebP containing the chunks \texttt{VP8X} (10 bytes), \texttt{ICCP} (536), \texttt{VP8L} (403\,675) and \texttt{EXIF} (128), and it decodes to a 580x1255 image, shown in the appendices.
   \end{enumerate}
 
-  The recovered evidence is \texttt{chat_screenshot.webp}; the remaining files are auxiliary items submitted only to support and reproduce this finding: \path{derive_parameters.py} derives the grid, the read order and the prefix from the video and writes \path{params.json}, \path{extract_full_image.py} rebuilds the payload from those parameters (so no value came from the air), and \path{aot_secret.png} and \path{chat_screenshot_translated.png} are, respectively, a rendering of the payload and the same rendering with the messages translated. Re-running both scripts on the same video reproduces \texttt{chat_screenshot.webp}.
+  The recovered evidence is \texttt{chat\_screenshot.webp}; the remaining files are auxiliary items submitted only to support and reproduce this finding: \path{derive_parameters.py} derives the grid, the read order and the prefix from the video and writes \path{params.json}, \path{extract_full_image.py} rebuilds the payload from those parameters (so no value came from the air), and \path{aot_secret.png} and \path{chat_screenshot_translated.png} are, respectively, a rendering of the payload and the same rendering with the messages translated. Re-running both scripts on the same video reproduces \texttt{chat\_screenshot.webp}.
 
   We also tested and rejected other hypotheses: reading the whole LSB plane of the black frames as a byte stream found no file signature; rendering the grid bits of each group of frames as an image produced only noise; and frames 2924--2925 and 1782--1973, which show many set LSBs outside the grid, turned out to be genuinely dark scene, not carriers.
 
@@ -552,7 +552,7 @@ The manifest also records an \texttt{artifact\_mtime} of \texttt{2026-08-25T13:2
 \includegraphics[width=0.40\textwidth]{../Artifacts/Aot_Artifacts/aot_secret.png}
 \hspace{0.04\textwidth}
 \includegraphics[width=0.40\textwidth]{../Artifacts/Aot_Artifacts/chat_screenshot_translated.png}
-\caption{Left: \texttt{chat_screenshot.webp} as recovered, rendered as \texttt{aot\_secret.png}. Right: the same image with the messages translated into English.}
+\caption{Left: \texttt{chat\_screenshot.webp} as recovered, rendered as \texttt{aot\_secret.png}. Right: the same image with the messages translated into English.}
 \end{figure}
 
 Extraction parameters derived from the video by \path{derive_parameters.py} and stored in \path{params.json}:
@@ -574,7 +574,7 @@ Black frames used to derive the grid & 0--10 and 1359 \\
 \end{center}
 
 \break
-Structure of the recovered file \texttt{chat_screenshot.webp}:
+Structure of the recovered file \texttt{chat\_screenshot.webp}:
 
 \begin{center}
 \renewcommand{\arraystretch}{1.25}
