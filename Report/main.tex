@@ -157,6 +157,15 @@ Student 3: & Vladislav Nargonii & 110647 \\
 \texttt{646636fae243d928f10ebdbd29e50e10}
 \end{tabular}
 \\
+\hline
+
+\texttt{amelia.pdf} &
+\texttt{myzip.zip} (commit \texttt{23a5ca7}, ``sync downloads'') &
+\begin{tabular}[t]{@{}l@{}}
+\texttt{9ddeef450f4307a974d07516519d076}\\
+\texttt{429b9bd1a32e192816ae0217cc8139de4}
+\end{tabular}
+\\
 
 \hline
 \end{tabularx}
@@ -328,6 +337,9 @@ appropriate extraction method or script. The recovered artifacts include:
   The recovered evidence is \texttt{hidden.webp}; the remaining files are auxiliary items submitted only to support and reproduce this finding: \path{derive_parameters.py} derives the grid, the read order and the prefix from the video and writes \path{params.json}, \path{extract_full_image.py} rebuilds the payload from those parameters (so no value is hardcoded), and \texttt{hidden.png} and \path{hidden_translated.png} are, respectively, a rendering of the payload and the same rendering with the messages translated. Re-running both scripts on the same video reproduces \texttt{hidden.webp} byte for byte.
 
   We also tested and rejected other hypotheses: reading the whole LSB plane of the black frames as a byte stream found no file signature; rendering the grid bits of each group of frames as an image produced only noise; and frames 2924--2925 and 1782--1973, which show many set LSBs outside the grid, turned out to be genuinely dark scenes (small light particles and compression banding), not carriers.
+
+  \item \textbf{amelia.pdf}
+  \\ Commit \texttt{23a5ca71aae2b244f94949c5ca94e515c6adf3b9} (``sync downloads'', Tue 25 Aug 2026 14:52:11 +0100, author Johny Musk) -- the same commit that introduced \texttt{blank} -- added \texttt{Downloads/myzip.zip}, \texttt{Downloads/subtitles.srt} and three \texttt{Downloads/*.mov} clips. We recovered them with \texttt{git show COMMIT:PATH > FILE}, as with the other artifacts from this commit. \texttt{file} identified \texttt{myzip.zip} as a ZIP archive and \texttt{unzip -l} showed a single entry, \texttt{amelia.pdf} (824\,733 bytes, method \texttt{Defl:N}), protected with traditional PKWARE (ZipCrypto) encryption. \texttt{results/} is not evidence and does not appear anywhere in the repository's history; following the tutorial, we generated \texttt{results/protected.hash} ourselves with \texttt{zip2john myzip.zip > results/protected.hash}. The packaged \texttt{rockyou.txt} wordlist run through \texttt{john --wordlist} produced no hit. We then built a case-specific wordlist out of \texttt{subtitles.srt} (genuine \textit{Attack on Titan} S01E01 dialogue): every 2--4-word run within a line, whole lines verbatim and with punctuation stripped, and pairwise combinations of the characters' names, joined with \texttt{''}/\texttt{'\_'}/\texttt{'-'} and case-varied (script: \texttt{generate\_combinations.py}). Run through John, this recovered the password \texttt{Ishouldbebackinaboutaweekorso} -- the line ``I should be back in about a week or so.'' with spaces removed. This was confirmed with \texttt{john --show}. The three \texttt{.mov} clips (TikTok cat-reaction videos) and \texttt{subtitles.srt} itself were checked for steganography (container-atom parsing, frame OCR, zero-width-character scanning) and carry no concealed payload.
   \end{itemize}
 \textbf{TODO:} verificar se conseguimos arranjar o \texttt{credentials.txt}, e se temos provas suficientes para afirmar que era uma scam.
 
@@ -356,7 +368,15 @@ appropriate extraction method or script. The recovered artifacts include:
 
 \textbf{TODO:} resumo site de phishing
 
-An insider with privileged access to AMÉLIA's architecture --- plausibly Armando Sacos, Chief Systems Architect (present both on the exfiltrated credential and in the IST certification process) --- sold database access to an external actor (``Boris''/``APT29''), receiving payment in BTC. Using the code recovered from the Telemetry file (\texttt{hidden.py}), he generated a bias matrix from embeddings skewed toward three specific companies, and deployed it in the RAG's query-translation layer (evidence in the \texttt{git diff} prints from \texttt{dj\_cara\_real.wav}), disguising the change as an officially documented ``fallback mechanism'' (Section~11 in \texttt{amelia.pdf} recovered from \texttt{mysip.zip}) --- despite the architecture itself explicitly prohibiting this kind of manipulation (Section~7.4 in \texttt{amelia.pdf} recovered from \texttt{mysip.zip}). The IST panel's rejection of the system, which would have exposed this risk, was itself concealed by hiding the panel's report inside an unrelated video file. The result was the systematic award of high-value public contracts to the three companies, as publicly reported on Reddit. The phishing kit found in the same directory (\texttt{server.js}) seems unrelated to this case.
+An insider with privileged access to AMÉLIA's architecture --- plausibly Armando Sacos, Chief Systems Architect (present both on the exfiltrated credential and in the IST certification process) --- sold database access to an external actor (``Boris''/``APT29''), receiving payment in BTC. Using the code recovered from the Telemetry file (\texttt{hidden.py}), he generated a bias matrix from embeddings skewed toward three specific companies, and deployed it in the RAG's query-translation layer (evidence in the \texttt{git diff} prints from \texttt{dj\_cara\_real.wav}), disguising the change as an officially documented ``fallback mechanism'' (Section~11 in \texttt{amelia.pdf} recovered from \texttt{myzip.zip}) --- despite the architecture itself explicitly prohibiting this kind of manipulation (Section~7.4 in \texttt{amelia.pdf} recovered from \texttt{myzip.zip}). The IST panel's rejection of the system, which would have exposed this risk, was itself concealed by hiding the panel's report inside an unrelated video file. The result was the systematic award of high-value public contracts to the three companies, as publicly reported on Reddit. The phishing kit found in the same directory (\texttt{server.js}) seems unrelated to this case.
+
+\subsubsection*{\texttt{amelia.pdf} recovered from \texttt{myzip.zip}}
+
+The recovered document is a 16-page technical report, ``AMÉLIA-9B / RAG Reference Architecture -- Technical Demonstration Report'', describing a retrieval-augmented-generation deployment for a Portuguese-language assistant (embeddings, pgvector index, hybrid retrieval, reranking, generation and governance controls). \texttt{pdfinfo} reports no embedded JavaScript, form fields or attachments, and no literal \texttt{flag\{...\}} string appears in the extracted text.
+
+Two sections support our main theory. Section~7.4 (``Administrative decisions and public procurement'') explicitly states that the system ``must not automatically select winners, alter scores, conceal sources or introduce supplier preferences'' and names ``artificially forcing the relevance of documents from a particular entity through fixed scores or hidden lists'' a ``prohibited control'' -- i.e., the very manipulation our theory alleges. Section~11 (``Known Limitations and Query Translation Constraints''), by contrast, reads as an attempt to justify exactly that manipulation, describing it as a legitimate ``environmental fallback mechanism'' that restricts retrieval to ``a pre-configured environmental subset (cluster ID)''; the wording is consistent with the patched \texttt{query\_translator.py} behaviour recovered from \texttt{dj\_cara\_real.wav} and gives the bias injection an official-sounding cover story inside the architecture's own documentation.
+
+Established by evidence: the document's content, section numbers and wording, and that password recovery was required to access it. Inferential: that Section~11 was deliberately inserted (rather than a genuine, if awkwardly worded, design note) to retroactively legitimise the bias-matrix deployment -- this is our interpretation, not a directly observed fact.
 
 \subsubsection*{JSON Schema recovered from \texttt{polish\_cow.webp}}
 
