@@ -466,6 +466,7 @@ The available evidence supports a hypothesis of attribution but falls short of d
     \item Pursue formal identification of ``Johny Musk'' and correlate with Armando Sacos's known access credentials and activity.
     \item Attempt identification of the individual in the Telegram photograph and trace the disclosed BTC wallet/transactions.
     \item Formally request the original AM\'ELIA production logs and \texttt{query\_translator.py} deployment history to confirm the patch described in \texttt{dj\_secret.py} was actually deployed.
+    \item Treat the ``APT29'' designation itself as unverified. It rests solely on a self-assigned Telegram display name and avatar text, with no infrastructural or cryptographic link to that intrusion set, and the conduct described (payment in BTC in exchange for manipulating public-contract awards) is financially motivated rather than the espionage pattern associated with that designation. A label adopted to intimidate the insider, or a deliberate false flag intended to direct an investigation abroad rather than towards the domestic beneficiaries, cannot be excluded.
 \end{itemize}
 
 % -----------------------------------------------------------------------------
@@ -487,31 +488,8 @@ The AI tools used were Claude AI and ChatGPT.
 % Attach relevant supporting evidence, screenshots, commands,
 % tool outputs or other material useful to substantiate or
 % reproduce the findings.
-
+\break
 \subsection*{Image recovered from the Attack on Titan video}
-
-Git LFS objects of the four parts of the episode file, as declared in \path{[...].mkv.parts.json} (commit \texttt{95f15e9}). Each part is 1\,552\,233\,616 bytes; joined in this order they give the 6\,208\,934\,464-byte file whose SHA-256 is the value declared in the manifest:
-
-\begin{center}
-\texttt{9de6f912cfaffcb8d68f4c2db39dff1e}\\
-\texttt{22994c92e56e8daac70e542caf67b9b7}
-\end{center}
-
-\begin{center}
-\renewcommand{\arraystretch}{1.25}
-\begin{tabularx}{\textwidth}{>{\bfseries}l r X}
-\hline
-\textbf{Part} & \textbf{Offset} & \textbf{LFS object (sha256)} \\
-\hline
-part01 & 0 & \begin{tabular}[t]{@{}l@{}}\texttt{dc91370f60fad62f8ed25c4531df84b6}\\\texttt{c84d3595e250cd200ba6645d8e79ea58}\end{tabular} \\
-part02 & 1\,552\,233\,616 & \begin{tabular}[t]{@{}l@{}}\texttt{3d076262df72c96c069b64b4407a3a58}\\\texttt{b743c93453c2f9f0bcb5367088f3b424}\end{tabular} \\
-part03 & 3\,104\,467\,232 & \begin{tabular}[t]{@{}l@{}}\texttt{8f1771479ada2acf649b05c3b4b62e1a}\\\texttt{157a07e6b183a2abe379d152e3cb531e}\end{tabular} \\
-part04 & 4\,656\,700\,848 & \begin{tabular}[t]{@{}l@{}}\texttt{71880aaf10eb72c986c6a5255b7273ef}\\\texttt{c6e00405fb48da33f17ef54e249386c1}\end{tabular} \\
-\hline
-\end{tabularx}
-\end{center}
-
-The manifest also records an \texttt{artifact\_mtime} of \texttt{2026-08-25T13:28:00+01:00}, i.e. about two hours before the commit that added the files.
 
 \begin{figure}[ht]
 \centering
@@ -520,41 +498,5 @@ The manifest also records an \texttt{artifact\_mtime} of \texttt{2026-08-25T13:2
 \includegraphics[width=0.40\textwidth]{../Artifacts/Aot_Artifacts/chat_screenshot_translated.png}
 \caption{Left: \texttt{chat\_screenshot.webp} as recovered, rendered as \texttt{aot\_secret.png}. Right: the same image with the messages translated into English.}
 \end{figure}
-
-Extraction parameters derived from the video by \path{derive_parameters.py} and stored in \path{params.json}:
-
-\begin{center}
-\renewcommand{\arraystretch}{1.25}
-\begin{tabularx}{\textwidth}{>{\bfseries}l X}
-\hline
-Grid X & 53, 159, 266, 373, 480, 586, 693, 800 \\
-Grid Y & 60, 180, 300, 420 \\
-Bits per frame & 96 (32 positions x 3 channels, LSB of each) \\
-Read order & R, then G, then B; each channel row by row, top to bottom, left to right; leftmost position is the most significant bit \\
-Start frame & 0, sequential decode order \\
-Prefix & 8 bytes: payload length as a 64-bit big-endian integer (404\,394) \\
-Frames needed & 33\,701 \\
-Black frames used to derive the grid & 0--10 and 1359 \\
-\hline
-\end{tabularx}
-\end{center}
-
-\break
-Structure of the recovered file \texttt{chat\_screenshot.webp}:
-
-\begin{center}
-\renewcommand{\arraystretch}{1.25}
-\begin{tabular}{l r r l}
-\hline
-\textbf{Chunk} & \textbf{Offset} & \textbf{Size (bytes)} & \textbf{Content} \\
-\hline
-\texttt{RIFF}/\texttt{WEBP} & 0 & 404\,386 & container header \\
-\texttt{VP8X} & 12 & 10 & flags (ICC, EXIF), canvas 580x1255 \\
-\texttt{ICCP} & 30 & 536 & Apple display colour profile \\
-\texttt{VP8L} & 574 & 403\,675 & lossless image data \\
-\texttt{EXIF} & 404\,258 & 128 & capture time 2026:04:11 21:57:34 (no time zone) \\
-\hline
-\end{tabular}
-\end{center}
 
 \end{document}
