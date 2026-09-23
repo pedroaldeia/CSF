@@ -466,14 +466,20 @@ Our leading theory is that the same individual committed both crimes, phishing a
 \textit{Does the available evidence support any conclusion about the identity of the person or persons responsible for the scam or any other suspicious activity uncovered? Discuss the strengths and weaknesses of the attribution evidence you have found. Provide recommendations to SI regarding the next investigative steps, including any additional evidence that should be preserved or obtained before further action is taken.
 }
 
-% TODO:
-% Address:
-% - whether attribution is possible;
-% - strength of the evidence;
-% - limitations and uncertainty;
-% - recommended next investigative steps;
-% - evidence that the SI should preserve or obtain.
+The available evidence supports a hypothesis of attribution but falls short of definitive proof of identity.
 
+\textbf{Strengths:} All concealed artifacts (excluding the phishing kit) were committed by the same author, ``Johny Musk,'' between 18 and 25 August 2026, indicating a single actor consolidated this material. The Telegram screenshot (\texttt{aot\_secret.png}) directly documents collusion between an insider and an external contact (``Boris''/``APT29''), including tasking, payment in BTC, and intent to poison the pipeline and shift blame to system administrators. Dr.\ Eng.\ Armando Sacos, Chief Systems Architect, is independently named on the exfiltrated Google Cloud credential (\texttt{gta\_hidden\_message.json}) and appears as a signatory in the AM\'ELIA assurance report, placing him plausibly at the intersection of system access and the events described.
+
+\textbf{Weaknesses:} ``Johny Musk'' is almost certainly a pseudonym and is not independently linked to Armando Sacos or any other named individual. ``Boris''/``APT29'' is identified only by a Telegram display name and avatar text, not verified identity; the accompanying photograph shows an unidentified individual. No metadata or corroborating evidence directly ties the commit author to Sacos's real-world identity, and the contents of \texttt{credentials.txt} do not contain credentials from phished victims, hence we don't have evidence that this actually occurred.
+
+\textbf{Recommendations to SI:}
+\begin{itemize}
+    \item Preserve the full repository (all branches/commits), the LFS objects, and all recovered artifacts with documented chain of custody.
+    \item Request server/access logs (IP addresses, timestamps) associated with the exposed repository and its commits.
+    \item Pursue formal identification of ``Johny Musk'' and correlate with Armando Sacos's known access credentials and activity.
+    \item Attempt identification of the individual in the Telegram photograph and trace the disclosed BTC wallet/transactions.
+    \item Formally request the original AM\'ELIA production logs and \texttt{query\_translator.py} deployment history to confirm the patch described in \texttt{dj\_secret.py} was actually deployed.
+\end{itemize}
 
 % -----------------------------------------------------------------------------
 % Use of Artificial Intelligence
