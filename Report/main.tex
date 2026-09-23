@@ -121,11 +121,32 @@ Student 3: & Vladislav Nargonii & 110647 \\
 \\
 \hline
 
-% TODO: Add relevant acquired/recovered artifacts.
+\texttt{hidden.py} &
+\path{ESP32_ADXL345_3Axis_Telemetry.xlsx} &
+\begin{tabular}[t]{@{}l@{}}
+\texttt{3369cd48df5bb112def25e662398674e}\\
+\texttt{89bdeb5df6eaa400c4ba538a9778f218}
 
-\vspace{30pt} &
-\vspace{30pt} &
-\vspace{30pt}
+\end{tabular}
+\\
+\hline
+
+\path{gta_hidden_message.json} &
+\path{gta_v_iceberg_unexplained.jpg} &
+\begin{tabular}[t]{@{}l@{}}
+\texttt{7d0f0c05c98fe80513e8e311918298f8}\\
+\texttt{539835d960e7270185ed25a5163d173d}
+\end{tabular}
+\\
+\hline
+
+\texttt{blank.png} &
+\texttt{blank} &
+\begin{tabular}[t]{@{}l@{}}
+\texttt{23cd980099fab1c0b6993a9d27899f86}\\
+\texttt{79ffe42d423d8d51b29c655c0d53bbec}
+
+\end{tabular}
 \\
 
 \hline
@@ -192,9 +213,62 @@ This file is used to perform the aforementioned scam activities, displaying the 
 We also found the file \texttt{credentials.txt} in this commit; however, we cannot see its contents.
 
 \textbf{(b)}
-Upon further inspection, we found many other artifacts that caught our eye.
-These artifacts do not seem to be related to the scam described above, but in fact to a completely different set of illegal activities.
-The recovered evidence, as well as the methodology used to extract it, is described below.
+We first examined the commit history with \texttt{git log} and identified ten
+commits. Additional concealed artifacts were recovered from files obtained
+through the repository and its history. Each item in the following list was
+obtained by switching between the aforementioned commits and using the
+appropriate extraction method or script. The recovered artifacts include:
+
+\begin{itemize}
+  \item \textbf{Commit 23a5ca7:} This commit contained a file named
+  \texttt{blank}, which was deleted in the final ``cleanup'' commit. We
+  recovered it with \texttt{git show COMMIT:PATH > blank}, where
+  \texttt{COMMIT} was \texttt{23a5ca7} and \texttt{PATH} was
+  \texttt{Downloads/blank}. The \texttt{file} command did not identify its
+  format, but
+  \texttt{hexdump -c blank} showed that the file contained parts of a PNG,
+  including the strings \texttt{IHDR}, \texttt{sRGB}, and \texttt{IDAT}; its
+  PNG signature had been overwritten. We restored the correct PNG signature
+  with the short form \texttt{printf PNG\_SIGNATURE | dd of=blank\_fixed.png}.
+  Here, \texttt{PNG\_SIGNATURE} denotes the standard eight-byte PNG header.
+  The resulting image showed a Reddit page titled ``Are public contracts
+  being monopolized?''
+
+  \textbf{Commits 43e5350 and 95f15e9:} These commits contained the
+  following files, respectively: the Excel workbook
+  \path{ESP32_ADXL345_3Axis_Telemetry_v2.xlsx} and two images in
+  \path{Pictures/Memes}:\\ \path{look_what_they_need_to_mimic_a_fraction_of_our_power.png}
+  and\\ \path{mr_incredible_becoming_uncanny.png}.
+  The Excel file contained three worksheets, each consisting of a 302 x 400
+  table of numerical values. At first glance, the file appeared to encode an
+  image, and each worksheet appeared to contain one of its RGB channels.
+  However, further analysis, together with a clue from
+  \path{look_what_they_need_to_mimic_a_fraction_of_our_power.png}, indicated
+  that the values represented the CIELAB colour space rather than RGB. We
+  used a Python script to convert the CIELAB values to RGB and reconstruct the
+  image.
+  After the conversion, a clue from the image
+  \path{mr_incredible_becoming_uncanny.png} indicated that the Gijswijt
+  sequence had to be used to extract the hidden data. The Gijswijt sequence
+  determines the jumps between positions where hidden bits are read from the
+  image. These bits are then grouped into bytes to reconstruct the secret
+  message. The algorithm extracts the LSB from the reconstructed RGB values, 
+  using the Gijswijt sequence to determine the reading positions. 
+  The extracted bits are packed into bytes in MSB-first order to recover the hidden payload.
+  The hidden message was a Python script.
+
+
+  \textbf{Commit 95f15e9:}
+  This commit had a image \path{Pictures/gta_v_iceberg_unexplained.jpg} 
+  We analyzed the luminance (Y) channel
+  and processed each 8 x 8 DCT block in zigzag order. We skiped the first
+  position, which is the DC coefficient, and examined the remaining AC
+  coefficients. For coefficients with an absolute value greater than one, the
+  script extracts the least significant bit. Groups of eight extracted bits
+  are interpreted in MSB-first order to reconstruct a byte stream. The script
+  then locates the first opening brace, decodes the following text as ASCII,
+  and parses it as a JSON object. This process recovered a JSON file with a Google Cloud
+  service-account credential containing a private key.
 
 \subsubsection*{\texttt{git diff} output inside \texttt{dj\_cara\_real.wav}}
 
@@ -223,7 +297,7 @@ This file was introduced with commit \textbf{[TODO: METER AQUI COMMIT E DATA]}. 
     \item That byte, interpreted as ASCII, is one character of the message.
   \end{itemize}
 \end{enumerate}
-
+\end{itemize}
 \textbf{TODO:} verificar se conseguimos arranjar o \texttt{credentials.txt}, e se temos provas suficientes para afirmar que era uma scam.
 
 % TODO:
