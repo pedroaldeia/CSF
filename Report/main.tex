@@ -317,20 +317,12 @@ appropriate extraction method or script. The recovered artifacts include:
   then locates the first opening brace, decodes the following text as ASCII,
   and parses it as a JSON object. This process recovered a JSON file with a Google Cloud
   service-account credential containing a private key.
-  
- \item \textbf{dj\_secret.py}
 
-  Commit \path{8c05e726b9d8f806c7e96c87457196b0a8b3ae1b} on Tue Aug 18 09:20:00 2026 +0100, by commit author Johny Musk, introduced the file \texttt{dj\_cara\_real.wav} under the directory \path{Music/}. 
-  At first, the file was a Git LFS pointer; we fetched the file through the \texttt{.git} directory using the command \path{git lfs 'dj_cara_real.wav'}.
-  The result was a real, playable \texttt{.wav} file. We checked the file's magic numbers and compared the file size described in the header with the real file size, and found nothing unusual. Next, we listened to the contents of the audio and found nothing suspicious.
+  \item \textbf{cow\_secret.json}
 
-  Then, we used a program called \texttt{sox} to produce an image of the spectrogram of the audio (annexed in the appendices) using the command \path{sox dj_cara_real.wav -n spectrogram -o full_spectrum.png}. Here, we noticed high activity in a frequency band that is nearly inaudible to humans (19--21\,kHz), so we inspected further. We used a script to produce a zoomed image of the spectrogram in that area: we found white noise in the mono audio region, but in the L-R region we recognized letters that constituted a \texttt{git diff} command output displaying part of a Python file.
-
-  \item \textbf{cow\_sercet.json}
-
-  This file was introduced with commit \textbf{[TODO: METER AQUI COMMIT E DATA]}. This was the procedure used to uncover the hidden JSON:
+  This file was introduced with commit 95f15e90a4ab0df0bdbf514dc108a3b9fbf4ba9e on 25 August 2026 at 15:38 by Johny Musk. This was the procedure used to uncover the hidden JSON:
   \begin{enumerate}
-    \item The \texttt{polish\_cow.webp} file was also a Git LFS pointer. To retrieve the actual file, we used the \texttt{curl} command to download the object from the corresponding Git LFS endpoint and save it as \texttt{polish\_cow.webp}.
+    \item The \texttt{polish\_cow.webp} file was a Git LFS pointer. To retrieve the actual file, we used the \texttt{curl} command to download the object from the corresponding Git LFS endpoint and save it as \texttt{polish\_cow.webp}.
     \item The retrieved file is a valid WebP animation. Its file type and correct magic numbers were verified using the \path{file polish_cow.webp} command.
     \item We extracted the file's bytes using \path{hexdump -C polish_cow.webp >> polish_cow_dump.txt}. By inspecting the file header, we identified the expected file size in bytes 4--7. Comparing this value with the actual size obtained using \path{ls -l polish_cow.webp}, we confirmed that both values matched, at approximately 241\,MB.
     \item Inspecting the end of the file revealed only the expected termination information, along with a link to the website where the GIF had been created.
@@ -345,6 +337,14 @@ appropriate extraction method or script. The recovered artifacts include:
       \item That byte, interpreted as ASCII, is one character of the message.
     \end{itemize}
   \end{enumerate}
+
+  \item \textbf{dj\_secret.py}
+
+  Commit \path{8c05e726b9d8f806c7e96c87457196b0a8b3ae1b} on Tue Aug 18 09:20:00 2026 +0100, by commit author Johny Musk, introduced the file \texttt{dj\_cara\_real.wav} under the directory \path{Music/}. 
+  At first, the file was also a Git LFS pointer; we fetched the file through the \texttt{.git}.
+  The result was a real, playable \texttt{.wav} file. We checked the file's magic numbers and compared the file size described in the header with the real file size, and found nothing unusual. Next, we listened to the contents of the audio and found nothing suspicious.
+
+  Then, we used a program called \texttt{sox} to produce an image of the spectrogram of the audio (annexed in the appendices) using the command \path{sox dj_cara_real.wav -n spectrogram -o full_spectrum.png}. Here, we noticed high activity in a frequency band that is nearly inaudible to humans (19--21\,kHz), so we inspected further. We used a script to produce a zoomed image of the spectrogram in that area: we found white noise in the mono audio region, but in the L-R region we recognized letters that constituted a \texttt{git diff} command output displaying part of a Python file.
 
   \item \textbf{aot\_secret.png}
 
