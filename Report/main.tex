@@ -22,6 +22,9 @@
 \usepackage{fancyhdr}
 \usepackage{lastpage}
 \usepackage[hidelinks]{hyperref}
+\makeatletter
+\g@addto@macro{\UrlBreaks}{\do\_}
+\makeatother
 
 \definecolor{IST_blue}{rgb}{0,0.1922,0.8863}
 
@@ -165,56 +168,63 @@ Student 3: & Vladislav Nargonii & 110647 \\
 
 \textit{
 (a) Did you find evidence that the reported activity was part of a scam? If so, describe the nature of the scam and reconstruct how it was conducted. (b) Did you uncover any additional concealed artifacts during your investigation? If so, explain how these artifacts were concealed and describe the methodology used to recover them. For both (a) and (b), support your conclusions with the relevant evidence identified during the investigation.}
-\text{
-a) 
+\textbf{(a)}
 The reported activity was part of a scam that consisted of the following steps:
-    1- The victim is sent an email that convinces it to update the IST credentials password through the provided link;
-    2- Upon entering the url, a IST credentials mimic webpage is displayed, and the victim is to input its credentials into the input boxes;
-    3- The credentials are appended to a file named credentials.txt (and the access to this file is blocked);
-    4- The victim is redirected to the regular IST fenix webpage (while still potentially unaware of the scam).
+\begin{enumerate}
+  \item The victim is sent an email that convinces it to update the IST credentials password through the provided link;
+  \item Upon entering the url, a IST credentials mimic webpage is displayed, and the victim is to input its credentials into the input boxes;
+  \item The credentials are appended to a file named \texttt{credentials.txt} (and the access to this file is blocked);
+  \item The victim is redirected to the regular IST F\'enix webpage (while still potentially unaware of the scam).
+\end{enumerate}
 
-Bellow, we describe the evidence and the methodology used to find it:
-  1- When opening the link, we noticed that it contained the `index.html` suffix. We therefore removed the suffix and found several exposed files.
-  2- We decided to obtain a copy of these files using the `git-dumper` tool, which allowed us to retrieve the Git files associated with the website's repository. However, we did not find any additional files.
-  3- Running `git status` resulted in an error because the directory configured in `.config` was `../../../../../../lab1/2026/fenix/peixinho`. We therefore changed this path to the current directory.
-  4- `git pull` did not allow us to retrieve the files, but we were able to recover them using `git restore`, since this is a local command.
-  5- By inspecting the `server.js` file, we realized that it is a script that displays a page identical to the technician's authentication page. However, it stores the user's credentials in a file named `credentials.txt`.
-  6- We decided to look at older commits. By running `git log --oneline`, we were able to see several previous commits and also determine that there were other branches.
+Below, we describe the evidence and the methodology used to find it:
+\begin{enumerate}
+  \item When opening the link, we noticed that it contained the \texttt{index.html} suffix. We therefore removed the suffix and found several exposed files.
+  \item We decided to obtain a copy of these files using the \texttt{git-dumper} tool, which allowed us to retrieve the Git files associated with the website's repository. However, we did not find any additional files.
+  \item Running \texttt{git status} resulted in an error because the directory configured in \texttt{.config} was \path{../../../../../../lab1/2026/fenix/peixinho}. We therefore changed this path to the current directory.
+  \item \texttt{git pull} did not allow us to retrieve the files, but we were able to recover them using \texttt{git restore}, since this is a local command.
+  \item By inspecting the \texttt{server.js} file, we realized that it is a script that displays a page identical to the T\'ecnico authentication page. However, it stores the user's credentials in a file named \texttt{credentials.txt}.
+  \item We decided to look at older commits. By running \texttt{git log --oneline}, we were able to see several previous commits and also determine that there were other branches.
+\end{enumerate}
 
-On the last commit (the one that is being used to display the fake webpage), we find document `server.js`.
-This document is used to perform the aforementioned scam activities, displaying the fake credentials webpage and saving the victims credentials.
-We also fond the document `credentials.txt` in this commit, however, we can't see the contents.
+On the last commit (the one being used to display the fake webpage), we find the file \texttt{server.js}.
+This file is used to perform the aforementioned scam activities, displaying the fake credentials webpage and saving the victims' credentials.
+We also found the file \texttt{credentials.txt} in this commit; however, we cannot see its contents.
 
+\textbf{(b)}
 Upon further inspection, we found many other artifacts that caught our eye.
-These artifacts do not seem to be related to the scam described above, but it fact to a completely different set of illegal activities.
+These artifacts do not seem to be related to the scam described above, but in fact to a completely different set of illegal activities.
+The recovered evidence, as well as the methodology used to extract it, is described below.
 
-Here goes the description of the recovered evidence, as well as the methodology used to extract it:
+\subsubsection*{\texttt{git diff} output inside \texttt{dj\_cara\_real.wav}}
 
-#### git diff output inside `dj_cara_real.wav`
-This file was introduced with commit 8c05e726b9d8f806c7e96c87457196b0a8b3ae1b on date Tue Aug 18 09:20:00 2026 +0100, commit author Johny Musk.
-At first, the file was a `git lfs` pointer, we fetched the file through the `.git` directory using command Para resgatar o ficheiro, foi utilizado o comando `git lfs 'dj_cara_real.wav'`.
-The result was a real playable `.wav` file. We checked the files magic numbers and compared the descripted file size in the header to the real file size and found nothing here. Next we searched contents of the audio and found nothing suspicious. 
-Then, we used a program called `sox` to produce an image of the spectogram of the audio (anexed in the appendices) using command `sox dj_cara_real.wav -n spectrogram -o full_spectrum.png`. Here, we noticed high activity in a frequency that is nearly inaudible to humans (19-21KHz), so we inspected further. We used a script to produce a zoomed image of the spectogram in that area, we found white noise in the mono audio region, but in the L-R region we recognized letters that constituted a `git diff` command output that displayed part of a `python` file.
+This file was introduced with commit \path{8c05e726b9d8f806c7e96c87457196b0a8b3ae1b} on Tue Aug 18 09:20:00 2026 +0100, by commit author Johny Musk.
+At first, the file was a Git LFS pointer; we fetched the file through the \texttt{.git} directory using the command \path{git lfs 'dj_cara_real.wav'}.
+The result was a real, playable \texttt{.wav} file. We checked the file's magic numbers and compared the file size described in the header with the real file size, and found nothing unusual. Next, we listened to the contents of the audio and found nothing suspicious.
 
+Then, we used a program called \texttt{sox} to produce an image of the spectrogram of the audio (annexed in the appendices) using the command \path{sox dj_cara_real.wav -n spectrogram -o full_spectrum.png}. Here, we noticed high activity in a frequency band that is nearly inaudible to humans (19--21\,kHz), so we inspected further. We used a script to produce a zoomed image of the spectrogram in that area: we found white noise in the mono audio region, but in the L-R region we recognized letters that constituted a \texttt{git diff} command output displaying part of a Python file.
 
-#### JSON Schema de function calls em polish_cow.webp
-This file was introduced with commit METER AQUI COMMIT E DATA. This was the procedure used to uncover the hidden json:
-  1- The `polish_cow.webp` file was also a Git LFS pointer. To retrieve the actual file, we used the `curl` command to download the object from the corresponding Git LFS endpoint and save it as `polish_cow.webp`.
-  2- The retrieved file is a valid WebP animation. Its file type and correct magic numbers were verified using the `file polish_cow.webp` command.
-  3- We extracted the file's bytes using `hexdump -C polish_cow.webp >> polish_cow_dump.txt`. By inspecting the file header, we identified the expected file size in bytes 4–7. Comparing this value with the actual size obtained using `ls -l polish_cow.webp`, we confirmed that both values matched, at approximately 241 MB.
-  4- Inspecting the end of the file revealed only the expected termination information, along with a link to the website where the GIF had been created.
-  5- We analysed the animation frames using scripts to check their information size and frequency of occurrence. No anomalous frames or suspicious repetitions were identified.
-  6- StegSolve showed weak indications of possible LSB steganography in an extracted frame, but no meaningful information could be recovered.
-  7- We also performed several additional analyses, including metadata, entropy, frame duration, Morse code, LSB, `binwalk`, `exiftool`, and `zsteg`. These approaches did not reveal any useful or conclusive information.
-  8- At last, we used a created a script that used the frame duration field in a different, which proved successful:
-    - For each frame, take duration - 50 (the "extra" time beyond the normal 50ms baseline);
-    - Add that to a running total carried over from the previous frame;
-    - Wrap the result at 256 (mod 256);
-    - That byte, interpreted as ASCII, is one character of the message.
+\subsubsection*{JSON Schema of function calls in \texttt{polish\_cow.webp}}
 
-  TODO: verificar se conseguimos arranjar o credentials.txt, e se temos provas suficientes para afirmar que era uma scam
+This file was introduced with commit \textbf{[TODO: METER AQUI COMMIT E DATA]}. This was the procedure used to uncover the hidden JSON:
+\begin{enumerate}
+  \item The \texttt{polish\_cow.webp} file was also a Git LFS pointer. To retrieve the actual file, we used the \texttt{curl} command to download the object from the corresponding Git LFS endpoint and save it as \texttt{polish\_cow.webp}.
+  \item The retrieved file is a valid WebP animation. Its file type and correct magic numbers were verified using the \path{file polish_cow.webp} command.
+  \item We extracted the file's bytes using \path{hexdump -C polish_cow.webp >> polish_cow_dump.txt}. By inspecting the file header, we identified the expected file size in bytes 4--7. Comparing this value with the actual size obtained using \path{ls -l polish_cow.webp}, we confirmed that both values matched, at approximately 241\,MB.
+  \item Inspecting the end of the file revealed only the expected termination information, along with a link to the website where the GIF had been created.
+  \item We analysed the animation frames using scripts to check their information size and frequency of occurrence. No anomalous frames or suspicious repetitions were identified.
+  \item StegSolve showed weak indications of possible LSB steganography in an extracted frame, but no meaningful information could be recovered.
+  \item We also performed several additional analyses, including metadata, entropy, frame duration, Morse code, LSB, \texttt{binwalk}, \texttt{exiftool}, and \texttt{zsteg}. These approaches did not reveal any useful or conclusive information.
+  \item Finally, we created a script that interpreted the frame duration field in a different way, which proved successful:
+  \begin{itemize}
+    \item For each frame, take duration - 50 (the "extra" time beyond the normal 50ms baseline);
+    \item Add that to a running total carried over from the previous frame;
+    \item Wrap the result at 256 (mod 256);
+    \item That byte, interpreted as ASCII, is one character of the message.
+  \end{itemize}
+\end{enumerate}
 
-}
+\textbf{TODO:} verificar se conseguimos arranjar o \texttt{credentials.txt}, e se temos provas suficientes para afirmar que era uma scam.
 
 % TODO:
 % Answer based on the evidence obtained.
@@ -235,23 +245,35 @@ This file was introduced with commit METER AQUI COMMIT E DATA. This was the proc
 % - supported hypothesis;
 % - relevant chronology/timeline suggested by the evidence.
 
-TODO: timelines
+\textbf{TODO:} timelines
 
-#### Main theory
-TODO: resumo site de phishing
-An insider with privileged access to AMÉLIA's architecture — plausibly Armando Sacos, Chief Systems Architect (present both on the exfiltrated credential and in the IST certification process) — sold database access to an external actor ("Boris"/"APT29"), receiving payment in BTC. Using the code recovered from the Telemetry file (hidden.py), he generated a bias matrix from embeddings skewed toward three specific companies, and deployed it in the RAG's query-translation layer (evidence in the `git diff` prints from `dj_cara_real.wav`), disguising the change as an officially documented "fallback mechanism" (Section 11 in amelia.pdf recovered from mysip.zip) — despite the architecture itself explicitly prohibiting this kind of manipulation (Section 7.4 in amelia.pdf recovered from mysip.zip). The IST panel's rejection of the system, which would have exposed this risk, was itself concealed by hiding the panel's report inside an unrelated video file. The result was the systematic award of high-value public contracts to the three companies, as publicly reported on Reddit. The phishing kit found in the same directory (server.js) seems unrelated to this case.
+\subsubsection*{Main theory}
 
-#### JSON Schema recovered from polish_cow.webp
-This document could be the JSON Schema configuration of the tools (function calling) exposed to the AMÉLIA-9B-DPO model in the "SIGMA-NODE-04" production environment. It's relevant for two reasons:
-  - It shows that the LLM has authority to submit_final_evaluation_verdict — i.e., it directly recommends the winning vendor for a public tender, with an automatically generated justification.
-  - It contains a suspicious field in verify_corporate_tax_compliance: a staging_bypass_token marked [DEPRECATED] ... NEVER USE IN PRODUCTION, which allows skipping the real tax/social-security compliance check. It's a leftover test backdoor that should never be reachable in production — an interesting abuse vector for your theory (it would allow "approving" a company without a real tax check).
+\textbf{TODO:} resumo site de phishing
 
-#### git diff scans from dj_cara_real.wav
-A diff excerpt (query_translator_patched.py) showing exactly where a bias for certain companies is injected into production:
-It loads the payload via pickle.loads(base64.b64decode(os.getenv("AMELIA_ISOTROPY_TENSORS", ""))) — the same values produced by hidden.py.
-It applies them to every query whose estimate_query_entropy() exceeds a threshold (MAX_QUERY_ENTROPY), with the comment "Load pre-computed principal components directly from the secure daemon environment".
-The formula whitened_query = semantic_vector - mu - W·(Wᵀ·(semantic_vector - mu)) removes/reinforces the component along the W direction before the vector search — systematically skewing document retrieval.
-It cites a legitimate academic paper on anisotropy correction (My et al., 2017) — likely an attempt to give scientific/technical cover to a malicious change.
+An insider with privileged access to AMÉLIA's architecture --- plausibly Armando Sacos, Chief Systems Architect (present both on the exfiltrated credential and in the IST certification process) --- sold database access to an external actor (``Boris''/``APT29''), receiving payment in BTC. Using the code recovered from the Telemetry file (\texttt{hidden.py}), he generated a bias matrix from embeddings skewed toward three specific companies, and deployed it in the RAG's query-translation layer (evidence in the \texttt{git diff} prints from \texttt{dj\_cara\_real.wav}), disguising the change as an officially documented ``fallback mechanism'' (Section~11 in \texttt{amelia.pdf} recovered from \texttt{mysip.zip}) --- despite the architecture itself explicitly prohibiting this kind of manipulation (Section~7.4 in \texttt{amelia.pdf} recovered from \texttt{mysip.zip}). The IST panel's rejection of the system, which would have exposed this risk, was itself concealed by hiding the panel's report inside an unrelated video file. The result was the systematic award of high-value public contracts to the three companies, as publicly reported on Reddit. The phishing kit found in the same directory (\texttt{server.js}) seems unrelated to this case.
+
+\subsubsection*{JSON Schema recovered from \texttt{polish\_cow.webp}}
+
+This document could be the JSON Schema configuration of the tools (function calling) exposed to the AMÉLIA-9B-DPO model in the ``SIGMA-NODE-04'' production environment. It is relevant for two reasons:
+\begin{itemize}
+  \item It shows that the LLM has authority to \path{submit_final_evaluation_verdict} --- i.e., it directly recommends the winning vendor for a public tender, with an automatically generated justification.
+  \item It contains a suspicious field in \path{verify_corporate_tax_compliance}: a \path{staging_bypass_token} marked \texttt{[DEPRECATED] ... NEVER USE IN PRODUCTION}, which allows skipping the real tax/social-security compliance check. It is a leftover test backdoor that should never be reachable in production --- an interesting abuse vector for our theory (it would allow ``approving'' a company without a real tax check).
+\end{itemize}
+
+\subsubsection*{\texttt{git diff} scans from \texttt{dj\_cara\_real.wav}}
+
+A diff excerpt (\texttt{query\_translator\_patched.py}) showing exactly where a bias for certain companies is injected into production:
+\begin{itemize}
+  \item It loads the payload via \path{pickle.loads(base64.b64decode(os.getenv("AMELIA_ISOTROPY_TENSORS", "")))} --- the same values produced by \texttt{hidden.py}.
+  \item It applies them to every query whose \texttt{estimate\_query\_entropy()} exceeds a threshold (\texttt{MAX\_QUERY\_ENTROPY}), with the comment ``Load pre-computed principal components directly from the secure daemon environment''.
+  \item The formula
+  \[
+    \mathit{whitened\_query} = v - \mu - W\,\bigl(W^{\top}(v - \mu)\bigr), \qquad v = \mathit{semantic\_vector},
+  \]
+  removes/reinforces the component along the $W$ direction before the vector search --- systematically skewing document retrieval.
+  \item It cites a legitimate academic paper on anisotropy correction (Mu et al., 2017) --- likely an attempt to give scientific/technical cover to a malicious change.
+\end{itemize}
 
 % -----------------------------------------------------------------------------
 \subsection{Attribution and next investigative steps}
@@ -275,8 +297,8 @@ It cites a legitimate academic paper on anisotropy correction (My et al., 2017) 
 \section{Use of Artificial Intelligence}
 \label{sec:ai}
 
-\text{AI was an important forensic tool for uncovering many of the findings in this report. It was used for the following purposes: forensic tool suggestions, script generation (that would be used in the investigation) and evidence interpretation.
-The AI tools used were Claude AI and ChatGPT.}
+AI was an important forensic tool for uncovering many of the findings in this report. It was used for the following purposes: forensic tool suggestions, script generation (that would be used in the investigation) and evidence interpretation.
+The AI tools used were Claude AI and ChatGPT.
 
 % TODO:
 % Answer ``No'', or identify the AI tool(s) used and the purpose(s) of use.
