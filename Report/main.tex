@@ -212,11 +212,8 @@ This file was introduced with commit METER AQUI COMMIT E DATA. This was the proc
     - Wrap the result at 256 (mod 256);
     - That byte, interpreted as ASCII, is one character of the message.
 
+  TODO: verificar se conseguimos arranjar o credentials.txt, e se temos provas suficientes para afirmar que era uma scam
 
-
-}
-\text{
-b) TODO
 }
 
 % TODO:
@@ -238,6 +235,23 @@ b) TODO
 % - supported hypothesis;
 % - relevant chronology/timeline suggested by the evidence.
 
+TODO: timelines
+
+#### Main theory
+TODO: resumo site de phishing
+An insider with privileged access to AMÉLIA's architecture — plausibly Armando Sacos, Chief Systems Architect (present both on the exfiltrated credential and in the IST certification process) — sold database access to an external actor ("Boris"/"APT29"), receiving payment in BTC. Using the code recovered from the Telemetry file (hidden.py), he generated a bias matrix from embeddings skewed toward three specific companies, and deployed it in the RAG's query-translation layer (evidence in the `git diff` prints from `dj_cara_real.wav`), disguising the change as an officially documented "fallback mechanism" (Section 11 in amelia.pdf recovered from mysip.zip) — despite the architecture itself explicitly prohibiting this kind of manipulation (Section 7.4 in amelia.pdf recovered from mysip.zip). The IST panel's rejection of the system, which would have exposed this risk, was itself concealed by hiding the panel's report inside an unrelated video file. The result was the systematic award of high-value public contracts to the three companies, as publicly reported on Reddit. The phishing kit found in the same directory (server.js) seems unrelated to this case.
+
+#### JSON Schema recovered from polish_cow.webp
+This document could be the JSON Schema configuration of the tools (function calling) exposed to the AMÉLIA-9B-DPO model in the "SIGMA-NODE-04" production environment. It's relevant for two reasons:
+  - It shows that the LLM has authority to submit_final_evaluation_verdict — i.e., it directly recommends the winning vendor for a public tender, with an automatically generated justification.
+  - It contains a suspicious field in verify_corporate_tax_compliance: a staging_bypass_token marked [DEPRECATED] ... NEVER USE IN PRODUCTION, which allows skipping the real tax/social-security compliance check. It's a leftover test backdoor that should never be reachable in production — an interesting abuse vector for your theory (it would allow "approving" a company without a real tax check).
+
+#### git diff scans from dj_cara_real.wav
+A diff excerpt (query_translator_patched.py) showing exactly where a bias for certain companies is injected into production:
+It loads the payload via pickle.loads(base64.b64decode(os.getenv("AMELIA_ISOTROPY_TENSORS", ""))) — the same values produced by hidden.py.
+It applies them to every query whose estimate_query_entropy() exceeds a threshold (MAX_QUERY_ENTROPY), with the comment "Load pre-computed principal components directly from the secure daemon environment".
+The formula whitened_query = semantic_vector - mu - W·(Wᵀ·(semantic_vector - mu)) removes/reinforces the component along the W direction before the vector search — systematically skewing document retrieval.
+It cites a legitimate academic paper on anisotropy correction (My et al., 2017) — likely an attempt to give scientific/technical cover to a malicious change.
 
 % -----------------------------------------------------------------------------
 \subsection{Attribution and next investigative steps}
