@@ -148,6 +148,15 @@ Student 3: & Vladislav Nargonii & 110647 \\
 
 \end{tabular}
 \\
+\hline
+
+\texttt{hidden.webp} &
+\texttt{{[}Erai-raws{]} Shingeki no Kyojin - 01 {[}720p{]}{[}Dual Audio{]}.mkv} (joined from four LFS parts, commit \texttt{95f15e9}) &
+\begin{tabular}[t]{@{}l@{}}
+\texttt{5fb499e82ca618def24640a1e6298512}\\
+\texttt{646636fae243d928f10ebdbd29e50e10}
+\end{tabular}
+\\
 
 \hline
 \end{tabularx}
@@ -296,6 +305,29 @@ appropriate extraction method or script. The recovered artifacts include:
       \item That byte, interpreted as ASCII, is one character of the message.
     \end{itemize}
   \end{enumerate}
+
+  \item \subsubsection*{Telegram screenshot inside the \textit{Shingeki no Kyojin} episode}
+
+  The episode file (full name in Section~\ref{sec:acquired_artifacts}) was introduced with commit \texttt{95f15e9} (``phone backup''), on Tue 25 Aug 2026 15:38:27 +0100, by commit author Johny Musk (\path{sussyjohnnyhacker@gmail.com}), under the directory \path{Videos/Attack on Titan - S01E01/}. It was removed again in the final commit \texttt{e87b2ee} (``cleanup''), on 25 Aug 2026 18:05:37 +0100.
+
+  Unlike the other large files, the video was not stored as a single Git LFS object: the directory contains four pointers, \path{[...].mkv.part01} to \path{[...].mkv.part04}, each of 1\,552\,233\,616 bytes, together with a manifest \path{[...].mkv.parts.json}. The manifest declares the format \texttt{binary-split-parts}, the original file name, its total size (6\,208\,934\,464 bytes), the offset and SHA-256 of each part, and the SHA-256 of the joined file. We fetched each of the four objects from the LFS endpoint of the exposed repository, in the same way as the other artifacts, using \path{curl} against \path{https://fenix.dpss.inesc-id.pt/.git/lfs/objects/<xx>/<yy>/<oid>}, where \texttt{<oid>} is the object identifier of the part (listed in the appendices) and \texttt{<xx>} and \texttt{<yy>} are its first two pairs of characters. We then concatenated the four parts in the order given by the manifest (\path{cat part01 part02 part03 part04 > episode.mkv}). The SHA-256 of the result matches the value declared in the manifest, which confirms that the join is correct and that the file was not altered in transit.
+
+  The recovered payload is a WebP image (\texttt{hidden.webp}, 404\,394 bytes) that was concealed in the least significant bits (LSBs) of the video frames. This was the procedure used to uncover it:
+  \begin{enumerate}
+    \item \texttt{ffprobe} reported an H.264 stream of 854x480 with pixel format \texttt{gbrp}, i.e. lossless full RGB without chroma subsampling. Ordinary anime releases are lossy YUV 4:2:0, so re-encoding an episode in lossless RGB only makes sense to preserve every pixel value exactly, which is the precondition for LSB steganography. This is what prompted us to look for hidden data.
+    \item We decoded the video frame by frame with \texttt{PyAV} (format \texttt{rgb24}) and computed the mean of each frame's LSB plane. Natural footage sits near 0.5, but several ranges were close to 0. In frames 0--11 the only pixel values present are 0 and 1, i.e. all-black frames in which a few values were set to 1.
+    \item In those black frames, every pixel equal to 1 lies on one of 32 positions: X = 53, 159, 266, 373, 480, 586, 693, 800 and Y = 60, 180, 300, 420, an evenly spaced 8x4 grid. Combining the positions lit in successive black frames converges to exactly these 32 positions and no others, and in the 70 black frames examined at full resolution no set LSB lies outside the grid. With three colour channels this gives 96 bits, i.e. 12 bytes, per frame.
+    \item Since a single frame only shows the positions whose bit is 1, the grid cannot be read from one frame alone; the empty positions are 0 bits and are equally part of the data.
+    \item We then applied all 192 combinations of channel order, grouping, row order, column order and bit order to frames 0--15 and searched the resulting byte streams for known file signatures, accepting a candidate only if the file structure was consistent (declared sizes large enough, every chunk with a readable name ending inside the file). Exactly one order passes: R, then G, then B, each channel read row by row, top to bottom and left to right, with the leftmost position as the most significant bit. It produces \texttt{RIFF}, \texttt{WEBP}, a \texttt{VP8X} chunk of 10 bytes and an \texttt{ICCP} chunk of 536 bytes, starting at byte 8. A second order (G, B, R) also places \texttt{RIFF}/\texttt{WEBP} plausibly but declares a file size of 0 and was rejected.
+    \item The 8 bytes preceding \texttt{RIFF} (\texttt{00 00 00 00 00 06 2b aa}) are a 64-bit big-endian integer equal to 404\,394, which matches the RIFF size field (404\,386) plus 8: the embedder wrote the length of the payload before the file itself.
+    \item That size requires 33\,701 frames at 12 bytes per frame, far more than the black frames provide. The grid is therefore present in \emph{every} frame; the black frames are merely where it is visible, because there the carrier bits stand out against pixel values that should all be 0. In normal footage the same bits are masked by the natural randomness of the LSBs.
+    \item We read the grid from frames 0--33\,700 in decode order, removed the 8-byte length header and truncated the result to 404\,394 bytes. Frames must be decoded sequentially from frame 0: seeking with \texttt{ffmpeg -ss} returned the wrong frames during the investigation.
+    \item The recovered file is a valid WebP containing the chunks \texttt{VP8X} (10 bytes), \texttt{ICCP} (536), \texttt{VP8L} (403\,675) and \texttt{EXIF} (128), and it decodes to a 580x1255 image, shown in the appendices. Its EXIF capture time is \texttt{2026:04:11 21:57:34}, with no time-zone field.
+  \end{enumerate}
+
+  The recovered evidence is \texttt{hidden.webp}; the remaining files are auxiliary items submitted only to support and reproduce this finding: \path{derive_parameters.py} derives the grid, the read order and the prefix from the video and writes \path{params.json}, \path{extract_full_image.py} rebuilds the payload from those parameters (so no value is hardcoded), and \texttt{hidden.png} and \path{hidden_translated.png} are, respectively, a rendering of the payload and the same rendering with the messages translated. Re-running both scripts on the same video reproduces \texttt{hidden.webp} byte for byte.
+
+  We also tested and rejected other hypotheses: reading the whole LSB plane of the black frames as a byte stream found no file signature; rendering the grid bits of each group of frames as an image produced only noise; and frames 2924--2925 and 1782--1973, which show many set LSBs outside the grid, turned out to be genuinely dark scenes (small light particles and compression banding), not carriers.
   \end{itemize}
 \textbf{TODO:} verificar se conseguimos arranjar o \texttt{credentials.txt}, e se temos provas suficientes para afirmar que era uma scam.
 
@@ -333,6 +365,20 @@ This document could be the JSON Schema configuration of the tools (function call
   \item It shows that the LLM has authority to \path{submit_final_evaluation_verdict} --- i.e., it directly recommends the winning vendor for a public tender, with an automatically generated justification.
   \item It contains a suspicious field in \path{verify_corporate_tax_compliance}: a \path{staging_bypass_token} marked \texttt{[DEPRECATED] ... NEVER USE IN PRODUCTION}, which allows skipping the real tax/social-security compliance check. It is a leftover test backdoor that should never be reachable in production --- an interesting abuse vector for our theory (it would allow ``approving'' a company without a real tax check).
 \end{itemize}
+
+\subsubsection*{Telegram conversation recovered from \texttt{{[}Erai-raws{]} Shingeki no Kyojin - 01}}
+
+The recovered image is a screenshot of a Telegram conversation with a contact shown as ``Boris'' (``last seen recently''), whose avatar carries the text ``APT 29''. The messages are in Russian; translated, they read:
+\begin{itemize}
+  \item 21:36, sent: ``I have the access keys to the AMELIA databases. You have the data. Is the money ready?''
+  \item 21:39, received: ``Yes. We're transferring 0.85 BTC to your wallet as agreed. This is only the first tranche. Confirm receipt and send a vector dump.''
+  \item 21:45, sent: ``Got it. Tomorrow I'll implement the new weights into the pipeline. I'll poison the data and blame the system administrators.''
+  \item 21:54, received: a photograph of an unidentified man at a multi-monitor desk, with a flag labelled ``RUSSIA'' in Cyrillic and a terminal reading ``Connection established'' in Russian, followed by ``Okay. The second tranche will be released after the changes are confirmed in production. Delete this chat.''
+\end{itemize}
+
+% TODO: VERIFICAR
+This item is the direct evidence for the payment and tasking steps of our main theory. Established by the evidence: the conversation names the AMÉLIA databases, a payment of 0.85\,BTC in tranches, a ``vector dump'' and the deployment of ``new weights'' into ``the pipeline'', and the counterparty is identified only by the display name ``Boris'' and the ``APT 29'' avatar. The vocabulary matches the components described in \texttt{amelia.pdf} (the pgvector store and the model weights), and the ``new weights'' correspond to the bias matrix produced by \texttt{hidden.py} and deployed by the patch shown in the \texttt{git diff} recovered from \path{dj_cara_real.wav}. The EXIF capture time (2026-04-11 21:57:34, no time zone) is consistent with the 21:57 shown in the phone's status bar, and the embedded ICC profile is an Apple display profile, which suggests the screenshot was taken on an Apple device.
+
 
 \subsubsection*{\texttt{git diff} scans from \texttt{dj\_cara\_real.wav}}
 
@@ -387,5 +433,74 @@ The AI tools used were Claude AI and ChatGPT.
 % Attach relevant supporting evidence, screenshots, commands,
 % tool outputs or other material useful to substantiate or
 % reproduce the findings.
+
+\subsection*{Image recovered from the Attack on Titan video}
+
+Git LFS objects of the four parts of the episode file, as declared in \path{[...].mkv.parts.json} (commit \texttt{95f15e9}). Each part is 1\,552\,233\,616 bytes; joined in this order they give the 6\,208\,934\,464-byte file whose SHA-256 is the value declared in the manifest:
+
+\begin{center}
+\texttt{9de6f912cfaffcb8d68f4c2db39dff1e}\\
+\texttt{22994c92e56e8daac70e542caf67b9b7}
+\end{center}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{>{\bfseries}l r X}
+\hline
+\textbf{Part} & \textbf{Offset} & \textbf{LFS object (sha256)} \\
+\hline
+part01 & 0 & \begin{tabular}[t]{@{}l@{}}\texttt{dc91370f60fad62f8ed25c4531df84b6}\\\texttt{c84d3595e250cd200ba6645d8e79ea58}\end{tabular} \\
+part02 & 1\,552\,233\,616 & \begin{tabular}[t]{@{}l@{}}\texttt{3d076262df72c96c069b64b4407a3a58}\\\texttt{b743c93453c2f9f0bcb5367088f3b424}\end{tabular} \\
+part03 & 3\,104\,467\,232 & \begin{tabular}[t]{@{}l@{}}\texttt{8f1771479ada2acf649b05c3b4b62e1a}\\\texttt{157a07e6b183a2abe379d152e3cb531e}\end{tabular} \\
+part04 & 4\,656\,700\,848 & \begin{tabular}[t]{@{}l@{}}\texttt{71880aaf10eb72c986c6a5255b7273ef}\\\texttt{c6e00405fb48da33f17ef54e249386c1}\end{tabular} \\
+\hline
+\end{tabularx}
+\end{center}
+
+The manifest also records an \texttt{artifact\_mtime} of \texttt{2026-08-25T13:28:00+01:00}, i.e. about two hours before the commit that added the files.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.40\textwidth]{../Artifacts/Aot_Artifacts/hidden.png}
+\hspace{0.04\textwidth}
+\includegraphics[width=0.40\textwidth]{../Artifacts/Aot_Artifacts/hidden_translated.png}
+\caption{Left: \texttt{hidden.webp} as recovered, rendered as \texttt{hidden.png}. Right: the same image with the messages translated into English.}
+\end{figure}
+
+Extraction parameters derived from the video by \path{derive_parameters.py} and stored in \path{params.json}:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{>{\bfseries}l X}
+\hline
+Grid X & 53, 159, 266, 373, 480, 586, 693, 800 \\
+Grid Y & 60, 180, 300, 420 \\
+Bits per frame & 96 (32 positions x 3 channels, LSB of each) \\
+Read order & R, then G, then B; each channel row by row, top to bottom, left to right; leftmost position is the most significant bit \\
+Start frame & 0, sequential decode order \\
+Prefix & 8 bytes: payload length as a 64-bit big-endian integer (404\,394) \\
+Frames needed & 33\,701 \\
+Black frames used to derive the grid & 0--10 and 1359 \\
+\hline
+\end{tabularx}
+\end{center}
+
+\break
+Structure of the recovered file \texttt{hidden.webp}:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{l r r l}
+\hline
+\textbf{Chunk} & \textbf{Offset} & \textbf{Size (bytes)} & \textbf{Content} \\
+\hline
+\texttt{RIFF}/\texttt{WEBP} & 0 & 404\,386 & container header \\
+\texttt{VP8X} & 12 & 10 & flags (ICC, EXIF), canvas 580x1255 \\
+\texttt{ICCP} & 30 & 536 & Apple display colour profile \\
+\texttt{VP8L} & 574 & 403\,675 & lossless image data \\
+\texttt{EXIF} & 404\,258 & 128 & capture time 2026:04:11 21:57:34 (no time zone) \\
+\hline
+\end{tabular}
+\end{center}
 
 \end{document}
