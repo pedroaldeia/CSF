@@ -392,8 +392,6 @@ appropriate extraction method or script. The recovered artifacts include:
 
 \textit{Focusing on the recovered concealed material, can you identify relationships among the recovered items, explain what they may represent, and formulate a supported hypothesis about their significance to the case? Clearly identify which parts of your interpretation are established by evidence and which remain inferential.}
 
-\textbf{TODO:} timelines
-
 \subsubsection*{Main theory}
 
 An insider with privileged access to AMÉLIA's architecture, plausibly Armando Sacos, Chief Systems Architect (present both on the exfiltrated credential and in the IST certification process), sold database access to an external actor (``Boris''), receiving payment in BTC. Using the code recovered from the Telemetry file (\texttt{epstein\_secret.py}), he generated a bias matrix toward three specific companies (possibly as seen in the reddit photo, Grupo Lenha, Motalngil and SpinumMorta, S.A.), and deployed it in the RAG's query-translation (evidence in the \texttt{git diff} prints from \texttt{dj\_cara\_real.wav}), disguising the change as an officially documented ``fallback mechanism'' (Section~11 in \texttt{amelia.pdf} recovered from \texttt{myzip.zip}), despite the architecture itself explicitly prohibiting this kind of manipulation (Section~7.4 in \texttt{amelia.pdf}). The IST panel's rejection of the system, which would have exposed this risk, was itself concealed by hiding the panel's report inside an unrelated video file. The result was the systematic award of high-value public contracts to the three companies, as publicly reported on Reddit. The phishing kit found in the same directory (\texttt{server.js}) seems unrelated to this case.
@@ -491,10 +489,15 @@ The AI tools used were Claude AI and ChatGPT.
 \section{Appendices}
 \label{sec:appendices}
 
-% TODO:
-% Attach relevant supporting evidence, screenshots, commands,
-% tool outputs or other material useful to substantiate or
-% reproduce the findings.
+\subsection*{Spectrogram and hidden message in \texttt{dj_cara_real.wav file}}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.40\textwidth]{../Artifacts/dj_cara_real_wav_artifacts/full_spectrum.png}
+\hspace{0.04\textwidth}
+\includegraphics[width=0.40\textwidth]{../Artifacts/dj_cara_real_wav_artifacts/hidden_message_0.png}
+\caption{Left: image output of the spectogram from \texttt{sox} program. Right: one portion of the message hidden in the spectogram.}
+\end{figure}
 
 \subsection*{Image recovered from the Attack on Titan video}
 
