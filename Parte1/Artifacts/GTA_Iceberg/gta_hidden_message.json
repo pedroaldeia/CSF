@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "ama-amelia-gov-pt",
+  "private_key_id": "5fe9a2bf1d30f1a5cb12bc6dba0c8dd532609073",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDkhZDF1nIqDhZe\nA6U6LNBzwbPeOsYmZbKmcQ5N/dDirkpjolGF4UbWAN1XSyvXtPMEJkk/wt72BVSu\n3MIxu/KysS/s4hy865h8zDq+4bRe8Q4ahYC2mzHjb2mBLEs0MdsuzyibwYBpiAw8\nT57VaFfvARvDwgtlDM8szhRPu/CbHYOci/hUz2Zm7ZEFeAt76K5i2SXF62Di1OvS\n4XBc1N1lEuXBGJ1IK9S4L6vUAhttGCqgZsed/Tf3ciHn6QSCsMl4iQnwwI2rZR3l\n8spipJZhI8URkByiwasOJS6kNoyJsNUBFPpeSbxIJ8PtFdT7I1CI8CAIEp0N7saD\n75cSy32zAgMBAAECggEAB8iw6hGS6Uck5eY+jjZmkfrVc0q8jc7wVeZgnrF4QwW9\nd5quJ4mejb2RId8SoDyupm6IwjOTaqfl1DWle7zeLc4GnDgGKJKR1XZowzBm93Dt\n57iybgXn83T2ZWBVM3LwogM2a+UccvvKXDzjY9DeZeq7amCas2zLRcht6AVhKGIO\n0JHjbayldG9z14fF1u+83e9YVK8yUZf12R9Tlt7TVw8Q7nC89ujyKDzKLBMIQJKf\newiJP3Ww3wFs1bcMQDRpFh7Obuy6tD75St9+qy5YbCQU099LLz0wRsXhwUZFoMxR\nF2ESbPHhp8VB22GC3s1+I7CQxFwVDIJHl4GxjwLt4QKBgQD+3VeF6Pvzfu8mdXVl\nvvvaxqtt6jxHkQDImlbChJocW0G4SPp4J209nVotAyLAeNQ5VO2exq+cyDnclfA3\nL7gt9vO2EVg8TQpl8RT2voTEuG6smYkkzxC5z1/UHUpGtxEhyRTz3C7ONBZw7Ntm\nx8kuye+XsEUaMSA0kPXj+HrCwwKBgQDlii5ehG9bsZINQTGzEvGqZtQzUzHU60Y6\n35HSexn4XV71kBXNtP7XMFyASLnbNa88rYVvot0vAFIXeJf6tSytGxLCpPq6YOBB\nx3Cq2lPGhIanjeq2ZjUH4SMZkCHgejaXT3PCFOV1l2wnY2H3NH7V4nizgkBB2UCg\nCnOiIELKUQKBgQDCzROUutu45ZCNaMHunueJ9MgbHyor2V0r9yvRSeExQ18cKEup\ngxkwOxEtznPFgZVUrOFitqKLx07Sl5gf1k2EdHka9G7oyEnmWTqYzk5UvlN5gXEd\nvVcfbq3kRu761fo2RKfLLMRpv85XSfL4wEO5i4eh/Y0T0/C1vQb01HugWQKBgBJM\n3v+IHXy4/oTyAq1dQEkuo5Jn+pwYGeRNuMmIKPzlLNH1J9fbq0mqwGU15yNz90Gm\nL/JDkNDTfLgEVFGXqjUu6GL+VkMPwDFeXjww5eb43+dx6BmcsnOrXmoGVL0Z4UpU\n+kyp79VdOjE1ujTESaxxvt/I7aiSUpWv36I4YjrRAoGBAOpZnAVmdl5/XTHl1Ct1\nNdlHEMMkvF5SXkI6+Wg/Ty4wWMf4dFPpAS21QjSbRcZZWxSLUSMh8fv/ImU/hM/o\ntyWIIHx/tLgp8GAZOS6cYgmg7So85VE5q5uzT1DPTs0tNSILc+W6GmiYkNk6OvvE\nC8b3YcRnuJxTIMlCCO78Ropt\n-----END PRIVATE KEY-----\n",
+  "client_email": "armando-sacos-admin@ama-amelia-gov-pt.iam.gserviceaccount.com",
+  "client_id": "114184806075504485378",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/armando-sacos-admin%40ama-amelia-gov-pt.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
